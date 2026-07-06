@@ -1,0 +1,18 @@
+# Internal planning file — stays local, never pushed to GitHub
+CLAUDE.md
+
+# Private supplier documents (contain wholesale prices)
+*.pdf
+
+# Dependencies & build output (for later phases)
+node_modules/
+dist/
+
+# Environment / secrets
+.env
+.env.*
+
+# Editor & OS noise
+.vscode/
+Thumbs.db
+.DS_Store
