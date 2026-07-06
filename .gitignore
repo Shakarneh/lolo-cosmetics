@@ -14,5 +14,6 @@ dist/
 
 # Editor & OS noise
 .vscode/
+.claude/
 Thumbs.db
 .DS_Store
