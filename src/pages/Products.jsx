@@ -1,18 +1,12 @@
 import { Link, useParams } from 'react-router-dom'
-
-const titles = {
-  makeup: 'المكياج',
-  skincare: 'العناية بالبشرة',
-  body: 'العناية بالجسم',
-  hair: 'العناية بالشعر',
-  perfume: 'العطور',
-  other: 'مستلزمات أخرى',
-}
+import products from '../data/products.json'
+import { categoryNames } from '../data/categories.js'
+import ProductCard from '../components/ProductCard.jsx'
 
 function Products() {
   const { category } = useParams()
 
-  if (category && !titles[category]) {
+  if (category && !categoryNames[category]) {
     return (
       <section className="mx-auto max-w-6xl px-4 py-20 text-center">
         <h1 className="text-3xl font-bold text-rose-dark mb-4">القسم غير موجود</h1>
@@ -23,20 +17,16 @@ function Products() {
     )
   }
 
-  const title = category ? titles[category] : 'كل المنتجات'
+  const list = category ? products.filter((p) => p.category === category) : products
+  const title = category ? categoryNames[category] : 'كل المنتجات'
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-14">
       <h1 className="text-3xl font-bold text-rose-dark mb-2">{title}</h1>
-      <p className="text-lg text-taupe mb-10">
-        سيتم عرض المنتجات هنا في المرحلة الثانية — الكتالوج قيد التحضير 🛍️
-      </p>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div
-            key={i}
-            className="aspect-[3/4] rounded-2xl bg-blush/60 border border-rose/15 animate-pulse"
-          />
+      <p className="text-lg text-taupe mb-8">{list.length} منتج</p>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {list.map((p) => (
+          <ProductCard key={p.id} product={p} />
         ))}
       </div>
     </section>

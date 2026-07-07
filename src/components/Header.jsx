@@ -1,15 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-
-export const categories = [
-  { slug: 'makeup', name: 'المكياج' },
-  { slug: 'skincare', name: 'العناية بالبشرة' },
-  { slug: 'body', name: 'العناية بالجسم' },
-  { slug: 'hair', name: 'العناية بالشعر' },
-  { slug: 'perfume', name: 'العطور' },
-  { slug: 'other', name: 'مستلزمات أخرى' },
-]
+import { categories } from '../data/categories.js'
 
 const navLinkClass = ({ isActive }) =>
   `px-3 py-2 text-sm font-medium transition-colors ${
