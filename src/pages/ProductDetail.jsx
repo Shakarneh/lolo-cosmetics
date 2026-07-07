@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import products from '../data/products.json'
 import { categoryNames, categoryEmoji } from '../data/categories.js'
 import { whatsappLink } from '../lib/whatsapp.js'
@@ -21,7 +22,12 @@ function ProductDetail() {
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-14 grid md:grid-cols-2 gap-8 md:gap-12 items-start">
-      <div className="rounded-3xl overflow-hidden border border-rose/15 bg-white">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.45, ease: 'easeOut' }}
+        className="rounded-3xl overflow-hidden border border-rose/15 bg-white"
+      >
         {product.image ? (
           <img src={product.image} alt={product.nameAr} className="aspect-square w-full object-cover" />
         ) : (
@@ -30,9 +36,14 @@ function ProductDetail() {
             <span className="text-sm text-taupe">الصورة الحقيقية قريباً</span>
           </div>
         )}
-      </div>
+      </motion.div>
 
-      <div className="flex flex-col gap-4">
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.1, ease: 'easeOut' }}
+        className="flex flex-col gap-4"
+      >
         {product.brand && (
           <span className="text-sm font-serif tracking-[0.2em] text-taupe">{product.brand}</span>
         )}
@@ -82,7 +93,7 @@ function ProductDetail() {
         </a>
 
         <p className="text-sm text-taupe">كود المنتج: {product.code}</p>
-      </div>
+      </motion.div>
     </section>
   )
 }

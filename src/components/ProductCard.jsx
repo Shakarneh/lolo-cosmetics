@@ -1,11 +1,21 @@
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { categoryEmoji } from '../data/categories.js'
 import { whatsappLink } from '../lib/whatsapp.js'
 import { WhatsAppIcon } from './icons.jsx'
 
-function ProductCard({ product }) {
+function ProductCard({ product, index = 0 }) {
   return (
-    <div className="group rounded-2xl bg-white border border-rose/15 overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.35, delay: (index % 4) * 0.06, ease: 'easeOut' },
+      }}
+      viewport={{ once: true, margin: '0px 0px -40px 0px' }}
+      whileHover={{ y: -4, transition: { duration: 0.18, delay: 0 } }}
+      className="group rounded-2xl bg-white border border-rose/15 overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-200">
       <Link to={`/product/${product.id}`} className="block">
         {product.image ? (
           <img
@@ -45,7 +55,7 @@ function ProductCard({ product }) {
           </a>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

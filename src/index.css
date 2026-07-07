@@ -19,3 +19,27 @@ html {
 body {
   @apply bg-cream text-charcoal font-sans antialiased;
 }
+
+/* لمعة ضوء ناعمة تمسح واجهة الهيرو دورياً */
+.hero-sweep {
+  background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.16) 50%, transparent 58%);
+  background-size: 260% 100%;
+  animation: hero-sweep 8s ease-in-out infinite;
+}
+
+@keyframes hero-sweep {
+  0%,
+  45% {
+    background-position: 135% 0;
+  }
+  80%,
+  100% {
+    background-position: -35% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-sweep {
+    animation: none;
+  }
+}

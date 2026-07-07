@@ -1,4 +1,5 @@
 import { WhatsAppIcon, InstagramIcon } from '../components/icons.jsx'
+import Reveal from '../components/Reveal.jsx'
 
 const instagramGradient = {
   backgroundImage:
@@ -8,14 +9,22 @@ const instagramGradient = {
 function About() {
   return (
     <section className="mx-auto max-w-3xl px-4 py-16 text-center flex flex-col items-center gap-6">
-      <img src="/logo.jpeg" alt="لولو كوزمتكس" className="w-28 h-28 rounded-full shadow-md" />
-      <h1 className="text-3xl md:text-4xl font-bold text-rose-dark">من نحن</h1>
-      <p className="text-lg md:text-xl leading-relaxed text-charcoal">
-        لولو كوزمتكس — متجرك المفضل لمنتجات التجميل والعناية الشخصية.
-        نختار لك منتجات بجودة عالية وأسعار مناسبة، لأن إطلالتك اليومية تبدأ من هنا.
-      </p>
-      <p className="text-lg text-taupe">توصيل للضفة والقدس 🚚</p>
-      <div className="flex flex-wrap items-center justify-center gap-3">
+      <Reveal>
+        <img src="/logo.jpeg" alt="لولو كوزمتكس" className="w-28 h-28 rounded-full shadow-md" />
+      </Reveal>
+      <Reveal delay={0.1}>
+        <h1 className="text-3xl md:text-4xl font-bold text-rose-dark">من نحن</h1>
+      </Reveal>
+      <Reveal delay={0.2}>
+        <p className="text-lg md:text-xl leading-relaxed text-charcoal">
+          لولو كوزمتكس — متجرك المفضل لمنتجات التجميل والعناية الشخصية.
+          نختار لك منتجات بجودة عالية وأسعار مناسبة، لأن إطلالتك اليومية تبدأ من هنا.
+        </p>
+      </Reveal>
+      <Reveal delay={0.3}>
+        <p className="text-lg text-taupe">توصيل للضفة والقدس 🚚</p>
+      </Reveal>
+      <Reveal delay={0.4} className="flex flex-wrap items-center justify-center gap-3">
         <a
           href="https://wa.me/970593950074"
           target="_blank"
@@ -35,7 +44,7 @@ function About() {
           <InstagramIcon className="w-6 h-6" />
           تابعنا على انستغرام
         </a>
-      </div>
+      </Reveal>
     </section>
   )
 }

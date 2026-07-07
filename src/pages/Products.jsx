@@ -25,8 +25,8 @@ function Products() {
       <h1 className="text-3xl font-bold text-rose-dark mb-2">{title}</h1>
       <p className="text-lg text-taupe mb-8">{list.length} منتج</p>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {list.map((p) => (
-          <ProductCard key={p.id} product={p} />
+        {list.map((p, i) => (
+          <ProductCard key={p.id} product={p} index={i} />
         ))}
       </div>
     </section>
