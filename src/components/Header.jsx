@@ -99,6 +99,10 @@ function Header() {
           <NavLink to="/about" className={navLinkClass}>
             من نحن
           </NavLink>
+
+          <NavLink to="/contact" className={navLinkClass}>
+            تواصل معنا
+          </NavLink>
         </nav>
 
         <button
@@ -155,6 +159,9 @@ function Header() {
               </Link>
               <Link to="/about" onClick={closeAll} className="rounded-xl px-3 py-2.5 font-medium hover:bg-blush/60">
                 من نحن
+              </Link>
+              <Link to="/contact" onClick={closeAll} className="rounded-xl px-3 py-2.5 font-medium hover:bg-blush/60">
+                تواصل معنا
               </Link>
             </div>
           </motion.nav>

@@ -1,5 +1,6 @@
 import { WhatsAppIcon, InstagramIcon } from '../components/icons.jsx'
 import Reveal from '../components/Reveal.jsx'
+import { generalWhatsappLink } from '../lib/whatsapp.js'
 
 const instagramGradient = {
   backgroundImage:
@@ -26,7 +27,7 @@ function About() {
       </Reveal>
       <Reveal delay={0.4} className="flex flex-wrap items-center justify-center gap-3">
         <a
-          href="https://wa.me/970593950074"
+          href={generalWhatsappLink()}
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-white text-lg font-bold hover:opacity-90 transition-opacity"

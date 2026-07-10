@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase.js'
-import { compressImage } from './compressImage.js'
+import { compressImage } from '../lib/compressImage.js'
 
 const MAX_IMAGES = 15
 

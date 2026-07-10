@@ -6,6 +6,7 @@ import { WhatsAppIcon } from '../components/icons.jsx'
 import DataStatus from '../components/DataStatus.jsx'
 import ProductGallery from '../components/ProductGallery.jsx'
 import ProductReviews from '../components/ProductReviews.jsx'
+import ReviewFormSection from '../components/ReviewForm.jsx'
 import Stars from '../components/Stars.jsx'
 import { useProducts } from '../hooks/useProducts.js'
 import { useProductReviews } from '../hooks/useProductReviews.js'
@@ -129,6 +130,7 @@ function ProductDetail() {
     </section>
 
     <ProductReviews reviews={reviews} />
+    <ReviewFormSection productId={product.id} />
     </>
   )
 }
