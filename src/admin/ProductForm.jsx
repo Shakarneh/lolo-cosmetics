@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase.js'
 import { categoryNames } from '../data/categories.js'
 import { useAuth } from './AuthContext.jsx'
 import DataStatus from '../components/DataStatus.jsx'
+import ProductImages from './ProductImages.jsx'
 
 const emptyForm = {
   code: '',
@@ -165,15 +166,17 @@ function ProductForm() {
     }
     setSaving(true)
     setError(null)
+    const newId = payload.code.toLowerCase()
     const result = isNew
-      ? await supabase.from('products').insert({ id: payload.code.toLowerCase(), ...payload })
+      ? await supabase.from('products').insert({ id: newId, ...payload })
       : await supabase.from('products').update(payload).eq('id', id)
     setSaving(false)
     if (result.error) {
       setError(dbErrorMessage(result.error))
       return
     }
-    navigate('/admin/products')
+    // new product → go to its edit page so photos can be added right away
+    navigate(isNew ? `/admin/products/${newId}` : '/admin/products')
   }
 
   async function handleDelete() {
@@ -319,6 +322,12 @@ function ProductForm() {
           )}
         </div>
       </form>
+
+      {isNew ? (
+        <p className="text-sm text-taupe text-center">ستتمكن من إضافة الصور بعد حفظ المنتج.</p>
+      ) : (
+        <ProductImages productId={id} />
+      )}
     </div>
   )
 }

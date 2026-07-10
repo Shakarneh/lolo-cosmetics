@@ -3,6 +3,8 @@ import { supabase } from '../lib/supabase.js'
 
 // DB columns are snake_case — keep the camelCase names the UI already uses (same as products.json)
 function mapProduct(row) {
+  // product_images come back ordered by position — first one is the main photo
+  const main = row.product_images?.[0]
   return {
     id: row.id,
     code: row.code,
@@ -13,7 +15,9 @@ function mapProduct(row) {
     retailPrice: row.retail_price,
     onSale: row.on_sale,
     salePrice: row.sale_price,
-    image: null, // real photos come from product_images (Phase 6+)
+    image: main
+      ? supabase.storage.from('product-images').getPublicUrl(main.storage_path).data.publicUrl
+      : null,
     description: row.description,
     howToUse: row.how_to_use,
     featured: row.featured,
@@ -34,9 +38,10 @@ export function useProducts() {
     }
     const { data, error: dbError } = await supabase
       .from('products')
-      .select('*')
+      .select('*, product_images(storage_path, position)')
       .eq('is_published', true)
       .order('code')
+      .order('position', { referencedTable: 'product_images' })
     if (dbError) {
       setError(dbError)
       return
