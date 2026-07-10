@@ -1,12 +1,17 @@
 import { Link, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import products from '../data/products.json'
 import { categoryNames, categoryEmoji } from '../data/categories.js'
 import { whatsappLink } from '../lib/whatsapp.js'
 import { WhatsAppIcon } from '../components/icons.jsx'
+import DataStatus from '../components/DataStatus.jsx'
+import { useProducts } from '../hooks/useProducts.js'
 
 function ProductDetail() {
   const { id } = useParams()
+  const { products, loading, error, refetch } = useProducts()
+
+  if (loading || error) return <DataStatus error={error} onRetry={refetch} />
+
   const product = products.find((p) => p.id === id)
 
   if (!product) {

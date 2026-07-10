@@ -1,8 +1,13 @@
-import products from '../data/products.json'
 import ProductCard from '../components/ProductCard.jsx'
 import Reveal from '../components/Reveal.jsx'
+import DataStatus from '../components/DataStatus.jsx'
+import { useProducts } from '../hooks/useProducts.js'
 
 function Offers() {
+  const { products, loading, error, refetch } = useProducts()
+
+  if (loading || error) return <DataStatus error={error} onRetry={refetch} />
+
   const onSale = products.filter((p) => p.onSale)
 
   return (

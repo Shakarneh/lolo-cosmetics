@@ -1,10 +1,12 @@
 import { Link, useParams } from 'react-router-dom'
-import products from '../data/products.json'
 import { categoryNames } from '../data/categories.js'
 import ProductCard from '../components/ProductCard.jsx'
+import DataStatus from '../components/DataStatus.jsx'
+import { useProducts } from '../hooks/useProducts.js'
 
 function Products() {
   const { category } = useParams()
+  const { products, loading, error, refetch } = useProducts()
 
   if (category && !categoryNames[category]) {
     return (
@@ -16,6 +18,8 @@ function Products() {
       </section>
     )
   }
+
+  if (loading || error) return <DataStatus error={error} onRetry={refetch} />
 
   const list = category ? products.filter((p) => p.category === category) : products
   const title = category ? categoryNames[category] : 'كل المنتجات'
