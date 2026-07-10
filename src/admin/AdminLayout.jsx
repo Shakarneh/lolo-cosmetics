@@ -70,6 +70,11 @@ function AdminLayout() {
           <NavLink to="/admin/reviews" className={tabClass}>
             التقييمات
           </NavLink>
+          {profile.role === 'owner' && (
+            <NavLink to="/admin/users" className={tabClass}>
+              المستخدمين
+            </NavLink>
+          )}
         </nav>
       </header>
 

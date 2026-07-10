@@ -32,6 +32,16 @@ function Dashboard() {
           <h2 className="font-bold text-rose-dark">مراجعة التقييمات</h2>
           <p className="text-sm text-taupe">اعتماد وتثبيت تقييمات الزبائن</p>
         </Link>
+        {profile.role === 'owner' && (
+          <Link
+            to="/admin/users"
+            className="rounded-2xl bg-white border border-rose/15 p-6 flex flex-col items-center gap-2 text-center hover:border-rose/40 hover:shadow-md transition"
+          >
+            <span className="text-4xl">👥</span>
+            <h2 className="font-bold text-rose-dark">إدارة المستخدمين</h2>
+            <p className="text-sm text-taupe">حسابات الموظفين — للمالك فقط</p>
+          </Link>
+        )}
         {[{ emoji: '📊', title: 'الإحصائيات', note: 'قريباً' }].map((card) => (
           <div
             key={card.title}
