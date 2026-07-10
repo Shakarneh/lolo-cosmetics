@@ -4,15 +4,23 @@ import { categoryNames, categoryEmoji } from '../data/categories.js'
 import { whatsappLink } from '../lib/whatsapp.js'
 import { WhatsAppIcon } from '../components/icons.jsx'
 import DataStatus from '../components/DataStatus.jsx'
+import ProductGallery from '../components/ProductGallery.jsx'
+import ProductReviews from '../components/ProductReviews.jsx'
+import Stars from '../components/Stars.jsx'
 import { useProducts } from '../hooks/useProducts.js'
+import { useProductReviews } from '../hooks/useProductReviews.js'
 
 function ProductDetail() {
   const { id } = useParams()
   const { products, loading, error, refetch } = useProducts()
+  const { reviews } = useProductReviews(id)
 
   if (loading || error) return <DataStatus error={error} onRetry={refetch} />
 
   const product = products.find((p) => p.id === id)
+  const avgRating = reviews.length
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    : 0
 
   if (!product) {
     return (
@@ -26,19 +34,21 @@ function ProductDetail() {
   }
 
   return (
+    <>
     <section className="mx-auto max-w-5xl px-4 py-14 grid md:grid-cols-2 gap-8 md:gap-12 items-start">
       <motion.div
         initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.45, ease: 'easeOut' }}
-        className="rounded-3xl overflow-hidden border border-rose/15 bg-white"
       >
-        {product.image ? (
-          <img src={product.image} alt={product.nameAr} className="aspect-square w-full object-cover" />
+        {product.images.length > 0 ? (
+          <ProductGallery images={product.images} alt={product.nameAr} />
         ) : (
-          <div className="aspect-square w-full bg-blush/50 flex flex-col items-center justify-center gap-3">
-            <span className="text-7xl">{categoryEmoji[product.category] ?? '🛍️'}</span>
-            <span className="text-sm text-taupe">الصورة الحقيقية قريباً</span>
+          <div className="rounded-3xl overflow-hidden border border-rose/15 bg-white">
+            <div className="aspect-square w-full bg-blush/50 flex flex-col items-center justify-center gap-3">
+              <span className="text-7xl">{categoryEmoji[product.category] ?? '🛍️'}</span>
+              <span className="text-sm text-taupe">الصورة الحقيقية قريباً</span>
+            </div>
           </div>
         )}
       </motion.div>
@@ -54,6 +64,15 @@ function ProductDetail() {
         )}
         <h1 className="text-2xl md:text-3xl font-bold leading-snug">{product.nameAr}</h1>
 
+        {reviews.length > 0 && (
+          <div className="flex items-center gap-2 -mt-1">
+            <Stars rating={avgRating} />
+            <span className="text-sm text-taupe">
+              {avgRating.toFixed(1)} · {reviews.length} تقييم
+            </span>
+          </div>
+        )}
+
         <div className="flex flex-wrap items-center gap-2">
           <Link
             to={`/products/${product.category}`}
@@ -68,9 +87,17 @@ function ProductDetail() {
           )}
         </div>
 
-        <p className="text-2xl font-bold text-rose-dark">
-          {product.retailPrice != null ? `${product.retailPrice} ₪` : 'تواصل معنا لمعرفة السعر'}
-        </p>
+        {product.onSale && product.salePrice != null ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="text-2xl font-bold text-rose-dark">{product.salePrice} ₪</p>
+            <p className="text-lg text-taupe line-through">{product.retailPrice} ₪</p>
+            <span className="rounded-full bg-rose px-3 py-1 text-xs font-bold text-white">عرض 🎁</span>
+          </div>
+        ) : (
+          <p className="text-2xl font-bold text-rose-dark">
+            {product.retailPrice != null ? `${product.retailPrice} ₪` : 'تواصل معنا لمعرفة السعر'}
+          </p>
+        )}
 
         <div className="rounded-2xl bg-white border border-rose/15 p-5 flex flex-col gap-4 text-start">
           <div>
@@ -100,6 +127,9 @@ function ProductDetail() {
         <p className="text-sm text-taupe">كود المنتج: {product.code}</p>
       </motion.div>
     </section>
+
+    <ProductReviews reviews={reviews} />
+    </>
   )
 }
 

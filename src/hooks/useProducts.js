@@ -4,7 +4,9 @@ import { supabase } from '../lib/supabase.js'
 // DB columns are snake_case — keep the camelCase names the UI already uses (same as products.json)
 function mapProduct(row) {
   // product_images come back ordered by position — first one is the main photo
-  const main = row.product_images?.[0]
+  const images = (row.product_images ?? []).map(
+    (img) => supabase.storage.from('product-images').getPublicUrl(img.storage_path).data.publicUrl
+  )
   return {
     id: row.id,
     code: row.code,
@@ -15,9 +17,8 @@ function mapProduct(row) {
     retailPrice: row.retail_price,
     onSale: row.on_sale,
     salePrice: row.sale_price,
-    image: main
-      ? supabase.storage.from('product-images').getPublicUrl(main.storage_path).data.publicUrl
-      : null,
+    image: images[0] ?? null,
+    images,
     description: row.description,
     howToUse: row.how_to_use,
     featured: row.featured,

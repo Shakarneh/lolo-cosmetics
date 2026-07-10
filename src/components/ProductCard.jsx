@@ -16,7 +16,12 @@ function ProductCard({ product, index = 0 }) {
       viewport={{ once: true, margin: '0px 0px -40px 0px' }}
       whileHover={{ y: -4, transition: { duration: 0.18, delay: 0 } }}
       className="group rounded-2xl bg-white border border-rose/15 overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-200">
-      <Link to={`/product/${product.id}`} className="block">
+      <Link to={`/product/${product.id}`} className="block relative">
+        {product.onSale && product.salePrice != null && (
+          <span className="absolute top-2 start-2 z-10 rounded-full bg-rose px-2.5 py-0.5 text-[11px] font-bold text-white">
+            عرض
+          </span>
+        )}
         {product.image ? (
           <img
             src={product.image}
@@ -41,9 +46,16 @@ function ProductCard({ product, index = 0 }) {
           {product.nameAr}
         </Link>
         <div className="mt-auto pt-2 flex items-center justify-between gap-2">
-          <span className={`font-bold text-rose-dark ${product.retailPrice != null ? 'text-base' : 'text-xs'}`}>
-            {product.retailPrice != null ? `${product.retailPrice} ₪` : 'تواصل معنا للسعر'}
-          </span>
+          {product.onSale && product.salePrice != null ? (
+            <span className="font-bold text-rose-dark text-base">
+              {product.salePrice} ₪{' '}
+              <span className="text-xs font-normal text-taupe line-through">{product.retailPrice} ₪</span>
+            </span>
+          ) : (
+            <span className={`font-bold text-rose-dark ${product.retailPrice != null ? 'text-base' : 'text-xs'}`}>
+              {product.retailPrice != null ? `${product.retailPrice} ₪` : 'تواصل معنا للسعر'}
+            </span>
+          )}
           <a
             href={whatsappLink(product)}
             target="_blank"
