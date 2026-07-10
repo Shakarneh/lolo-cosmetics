@@ -67,6 +67,9 @@ function AdminLayout() {
           <NavLink to="/admin/products" className={tabClass}>
             المنتجات
           </NavLink>
+          <NavLink to="/admin/reviews" className={tabClass}>
+            التقييمات
+          </NavLink>
         </nav>
       </header>
 

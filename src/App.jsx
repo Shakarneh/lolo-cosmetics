@@ -12,6 +12,7 @@ import AdminLayout from './admin/AdminLayout.jsx'
 import AdminDashboard from './admin/Dashboard.jsx'
 import AdminProducts from './admin/ProductsList.jsx'
 import AdminProductForm from './admin/ProductForm.jsx'
+import AdminReviews from './admin/ReviewsQueue.jsx'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="products" element={<AdminProducts />} />
             <Route path="products/new" element={<AdminProductForm />} />
             <Route path="products/:id" element={<AdminProductForm />} />
+            <Route path="reviews" element={<AdminReviews />} />
           </Route>
         </Routes>
       </AuthProvider>
