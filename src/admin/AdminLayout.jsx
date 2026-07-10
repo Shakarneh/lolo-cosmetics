@@ -3,6 +3,11 @@ import { useAuth } from './AuthContext.jsx'
 
 export const roleNames = { owner: 'مالك', partner: 'شريك', employee: 'موظف' }
 
+const tabClass = ({ isActive }) =>
+  `rounded-full px-4 py-1.5 text-sm transition-colors ${
+    isActive ? 'bg-rose text-white font-bold' : 'text-taupe hover:bg-blush'
+  }`
+
 function AdminLayout() {
   const { session, profile, checking, signOut } = useAuth()
 
@@ -56,16 +61,11 @@ function AdminLayout() {
           </div>
         </div>
         <nav className="mx-auto max-w-6xl px-4 flex gap-1 pb-2">
-          <NavLink
-            to="/admin"
-            end
-            className={({ isActive }) =>
-              `rounded-full px-4 py-1.5 text-sm transition-colors ${
-                isActive ? 'bg-rose text-white font-bold' : 'text-taupe hover:bg-blush'
-              }`
-            }
-          >
+          <NavLink to="/admin" end className={tabClass}>
             الرئيسية
+          </NavLink>
+          <NavLink to="/admin/products" className={tabClass}>
+            المنتجات
           </NavLink>
         </nav>
       </header>

@@ -10,6 +10,7 @@ import { AuthProvider } from './admin/AuthContext.jsx'
 import AdminLogin from './admin/Login.jsx'
 import AdminLayout from './admin/AdminLayout.jsx'
 import AdminDashboard from './admin/Dashboard.jsx'
+import AdminProducts from './admin/ProductsList.jsx'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
+            <Route path="products" element={<AdminProducts />} />
           </Route>
         </Routes>
       </AuthProvider>
