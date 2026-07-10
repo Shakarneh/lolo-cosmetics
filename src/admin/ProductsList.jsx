@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { categoryNames } from '../data/categories.js'
 import DataStatus from '../components/DataStatus.jsx'
 import { useAdminProducts } from './useAdminProducts.js'
@@ -51,6 +52,12 @@ function ProductsList() {
             {noPriceCount} بدون سعر
           </span>
         )}
+        <Link
+          to="/admin/products/new"
+          className="ms-auto rounded-full bg-rose px-5 py-2 text-sm text-white font-bold hover:bg-rose-dark transition-colors"
+        >
+          + إضافة منتج
+        </Link>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
@@ -84,7 +91,11 @@ function ProductsList() {
       ) : (
         <div className="rounded-2xl bg-white border border-rose/15 divide-y divide-rose/10 overflow-hidden">
           {filtered.map((p) => (
-            <div key={p.id} className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-4 py-3">
+            <Link
+              key={p.id}
+              to={`/admin/products/${p.id}`}
+              className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-4 py-3 hover:bg-blush/30 transition-colors"
+            >
               <div className="flex-1 min-w-[220px]">
                 <p className="font-medium leading-snug line-clamp-1">{p.name_ar}</p>
                 <p className="text-xs text-taupe mt-0.5">
@@ -105,7 +116,7 @@ function ProductsList() {
                   <span className="text-xs font-medium text-amber-700">بدون سعر</span>
                 )}
               </span>
-            </div>
+            </Link>
           ))}
         </div>
       )}

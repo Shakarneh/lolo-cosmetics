@@ -11,6 +11,7 @@ import AdminLogin from './admin/Login.jsx'
 import AdminLayout from './admin/AdminLayout.jsx'
 import AdminDashboard from './admin/Dashboard.jsx'
 import AdminProducts from './admin/ProductsList.jsx'
+import AdminProductForm from './admin/ProductForm.jsx'
 
 function App() {
   return (
@@ -29,6 +30,8 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="products" element={<AdminProducts />} />
+            <Route path="products/new" element={<AdminProductForm />} />
+            <Route path="products/:id" element={<AdminProductForm />} />
           </Route>
         </Routes>
       </AuthProvider>
