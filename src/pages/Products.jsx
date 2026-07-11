@@ -5,32 +5,35 @@ import ProductCard from '../components/ProductCard.jsx'
 import DataStatus from '../components/DataStatus.jsx'
 import { useProducts } from '../hooks/useProducts.js'
 
-// Category banner (Phase 7.4) — falls back to the plain header if the image is missing
+// Category background header (Phase 7.4) — full-bleed image that dissolves into the page;
+// falls back to the plain header if the image is missing
 function CategoryBanner({ category, title, count }) {
   const [failed, setFailed] = useState(false)
 
   if (failed) {
     return (
-      <>
+      <div className="mx-auto max-w-6xl px-4 pt-14">
         <h1 className="text-3xl font-bold text-rose-dark mb-2">{title}</h1>
-        <p className="text-lg text-taupe mb-8">{count} منتج</p>
-      </>
+        <p className="text-lg text-taupe">{count} منتج</p>
+      </div>
     )
   }
 
   return (
-    <div className="relative rounded-3xl overflow-hidden border border-rose/15 mb-8">
+    <div className="relative h-64 md:h-80 overflow-hidden">
       <img
         src={`/images/categories/${category}.webp`}
         alt=""
         onError={() => setFailed(true)}
-        className="h-44 md:h-64 w-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover"
       />
-      {/* cream fade on the start side (right in RTL) so the title stays readable */}
-      <div className="absolute inset-0 bg-gradient-to-l from-cream/85 via-cream/25 to-transparent" />
-      <div className="absolute inset-0 flex flex-col justify-center items-start px-6 md:px-12">
-        <h1 className="text-3xl md:text-4xl font-bold text-rose-dark">{title}</h1>
-        <p className="text-lg text-charcoal/80 mt-1">{count} منتج</p>
+      {/* cream wash over the start side (right in RTL) so the title stays readable */}
+      <div className="absolute inset-0 bg-gradient-to-l from-cream/90 via-cream/40 to-cream/10" />
+      {/* dissolve into the page background */}
+      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-cream to-transparent" />
+      <div className="relative h-full mx-auto max-w-6xl px-4 flex flex-col justify-center items-start">
+        <h1 className="text-4xl md:text-5xl font-bold text-rose-dark">{title}</h1>
+        <p className="text-lg text-charcoal/80 mt-2">{count} منتج</p>
       </div>
     </div>
   )
@@ -57,10 +60,10 @@ function Products() {
   const title = category ? categoryNames[category] : 'كل المنتجات'
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-14">
-      {category ? (
-        <CategoryBanner category={category} title={title} count={list.length} />
-      ) : (
+    <>
+    {category && <CategoryBanner category={category} title={title} count={list.length} />}
+    <section className={`mx-auto max-w-6xl px-4 pb-14 ${category ? 'pt-6' : 'pt-14'}`}>
+      {!category && (
         <>
           <h1 className="text-3xl font-bold text-rose-dark mb-2">{title}</h1>
           <p className="text-lg text-taupe mb-8">{list.length} منتج</p>
@@ -72,6 +75,7 @@ function Products() {
         ))}
       </div>
     </section>
+    </>
   )
 }
 
