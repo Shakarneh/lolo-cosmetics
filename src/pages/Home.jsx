@@ -1,5 +1,6 @@
 import Hero from '../components/Hero.jsx'
 import Reveal from '../components/Reveal.jsx'
+import BrandStrip from '../components/BrandStrip.jsx'
 
 const features = [
   { emoji: '💎', title: 'جودة عالية', text: 'منتجات أصلية مختارة بعناية من أفضل الماركات' },
@@ -29,6 +30,8 @@ function Home() {
           <p className="text-center text-lg md:text-xl text-taupe">توصيل للضفة والقدس 🚚</p>
         </Reveal>
       </section>
+
+      <BrandStrip />
     </>
   )
 }
