@@ -2,7 +2,13 @@ import { Link, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { categoryNames, categoryEmoji } from '../data/categories.js'
 import { whatsappLink } from '../lib/whatsapp.js'
-import { WhatsAppIcon } from '../components/icons.jsx'
+import { socials } from '../data/socials.js'
+import { WhatsAppIcon, InstagramIcon, SnapchatIcon } from '../components/icons.jsx'
+
+const instagramGradient = {
+  backgroundImage:
+    'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+}
 import DataStatus from '../components/DataStatus.jsx'
 import ProductGallery from '../components/ProductGallery.jsx'
 import ProductReviews from '../components/ProductReviews.jsx'
@@ -115,15 +121,38 @@ function ProductDetail() {
           </div>
         </div>
 
-        <a
-          href={whatsappLink(product)}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-8 py-3.5 text-white text-lg font-bold hover:opacity-90 transition-opacity"
-        >
-          <WhatsAppIcon className="w-6 h-6" />
-          اطلب عبر واتساب
-        </a>
+        <div className="flex flex-col gap-2.5">
+          <a
+            href={whatsappLink(product)}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-8 py-3.5 text-white text-lg font-bold hover:opacity-90 transition-opacity"
+          >
+            <WhatsAppIcon className="w-6 h-6" />
+            اطلب عبر واتساب
+          </a>
+          <div className="flex gap-2.5">
+            <a
+              href={socials.instagramDm}
+              target="_blank"
+              rel="noreferrer"
+              style={instagramGradient}
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-white font-bold hover:opacity-90 transition-opacity"
+            >
+              <InstagramIcon className="w-5 h-5" />
+              اطلب عبر انستغرام
+            </a>
+            <a
+              href={socials.snapchat}
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-[#FFFC00] px-4 py-2.5 text-charcoal font-bold hover:opacity-90 transition-opacity"
+            >
+              <SnapchatIcon className="w-5 h-5" />
+              اطلب عبر سناب شات
+            </a>
+          </div>
+        </div>
 
         <p className="text-sm text-taupe">كود المنتج: {product.code}</p>
       </motion.div>

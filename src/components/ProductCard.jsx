@@ -2,7 +2,13 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { categoryEmoji } from '../data/categories.js'
 import { whatsappLink } from '../lib/whatsapp.js'
-import { WhatsAppIcon } from './icons.jsx'
+import { socials } from '../data/socials.js'
+import { WhatsAppIcon, InstagramIcon, SnapchatIcon } from './icons.jsx'
+
+const instagramGradient = {
+  backgroundImage:
+    'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+}
 
 function ProductCard({ product, index = 0 }) {
   return (
@@ -56,15 +62,36 @@ function ProductCard({ product, index = 0 }) {
               {product.retailPrice != null ? `${product.retailPrice} ₪` : 'تواصل معنا للسعر'}
             </span>
           )}
-          <a
-            href={whatsappLink(product)}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={`اطلب ${product.nameAr} عبر واتساب`}
-            className="shrink-0 rounded-full bg-[#25D366] p-2 text-white hover:opacity-90 transition-opacity"
-          >
-            <WhatsAppIcon className="w-4 h-4" />
-          </a>
+          <div className="shrink-0 flex items-center gap-1.5">
+            <a
+              href={whatsappLink(product)}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`اطلب ${product.nameAr} عبر واتساب`}
+              className="rounded-full bg-[#25D366] p-2 text-white hover:opacity-90 transition-opacity"
+            >
+              <WhatsAppIcon className="w-4 h-4" />
+            </a>
+            <a
+              href={socials.instagramDm}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`اطلب ${product.nameAr} عبر انستغرام`}
+              style={instagramGradient}
+              className="rounded-full p-2 text-white hover:opacity-90 transition-opacity"
+            >
+              <InstagramIcon className="w-4 h-4" />
+            </a>
+            <a
+              href={socials.snapchat}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`اطلب ${product.nameAr} عبر سناب شات`}
+              className="rounded-full bg-[#FFFC00] p-2 text-charcoal hover:opacity-90 transition-opacity"
+            >
+              <SnapchatIcon className="w-4 h-4" />
+            </a>
+          </div>
         </div>
       </div>
     </motion.div>
