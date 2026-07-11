@@ -20,7 +20,7 @@ function CategoryBanner({ category, title, count }) {
   }
 
   return (
-    <div className="relative h-64 md:h-80 overflow-hidden">
+    <div className="relative aspect-video md:aspect-auto md:h-[28rem] overflow-hidden">
       <img
         src={`/images/categories/${category}.webp`}
         alt=""
