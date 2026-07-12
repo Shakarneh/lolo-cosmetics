@@ -4,7 +4,6 @@ import { categoryNames } from '../data/categories.js'
 import ProductCard from '../components/ProductCard.jsx'
 import DataStatus from '../components/DataStatus.jsx'
 import { useProducts } from '../hooks/useProducts.js'
-import BrandStrip from '../components/BrandStrip.jsx'
 
 // One banner file per category — extensions differ because some are the user's own photos
 const categoryBannerSrc = {
@@ -116,7 +115,6 @@ function Products() {
         ))}
       </div>
     </section>
-    <BrandStrip />
     </>
   )
 }
