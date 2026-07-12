@@ -8,6 +8,8 @@ import Offers from './pages/Offers.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
 import Search from './pages/Search.jsx'
+import Cart from './pages/Cart.jsx'
+import { CartProvider } from './context/CartContext.jsx'
 import { AuthProvider } from './admin/AuthContext.jsx'
 import AdminLogin from './admin/Login.jsx'
 import AdminLayout from './admin/AdminLayout.jsx'
@@ -21,6 +23,7 @@ function App() {
   return (
     <MotionConfig reducedMotion="user">
       <AuthProvider>
+        <CartProvider>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
@@ -28,6 +31,7 @@ function App() {
             <Route path="/products/:category" element={<Products />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/cart" element={<Cart />} />
             <Route path="/offers" element={<Offers />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
@@ -42,6 +46,7 @@ function App() {
             <Route path="users" element={<AdminUsers />} />
           </Route>
         </Routes>
+        </CartProvider>
       </AuthProvider>
     </MotionConfig>
   )
