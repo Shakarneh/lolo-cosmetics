@@ -11,31 +11,37 @@ function CartPlusIcon({ className }) {
   )
 }
 
-// Adds one unit of the product to the cart, with a brief confirmation state.
-// size: 'sm' (cards) | 'lg' (product detail). Quantities are adjusted on the cart page.
-function AddToCartButton({ product, size = 'sm', className = '' }) {
+// Adds one unit of the product (optionally a chosen variation) to the cart, with a brief
+// confirmation state. size: 'sm' (cards) | 'lg' (product detail). disabled = e.g. a variation
+// product with no selection yet. Quantities are adjusted on the cart page.
+function AddToCartButton({ product, variantKey = null, size = 'sm', className = '', disabled = false }) {
   const { addItem } = useCart()
   const [added, setAdded] = useState(false)
 
   function onClick(e) {
     e.preventDefault()
     e.stopPropagation()
-    addItem(product.id)
+    if (disabled) return
+    addItem(product.id, 1, variantKey)
     setAdded(true)
     setTimeout(() => setAdded(false), 1300)
   }
 
   const pad = size === 'lg' ? 'px-8 py-3.5 text-lg gap-2.5' : 'px-3 py-2 text-sm gap-2'
   const icon = size === 'lg' ? 'w-6 h-6' : 'w-4 h-4'
+  const color = disabled
+    ? 'bg-rose/40 text-white cursor-not-allowed'
+    : added
+      ? 'bg-emerald-500 text-white'
+      : 'bg-rose text-white hover:bg-rose-dark'
 
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-label={`أضف ${product.nameAr} للسلة`}
-      className={`inline-flex items-center justify-center rounded-full font-bold transition-colors ${pad} ${
-        added ? 'bg-emerald-500 text-white' : 'bg-rose text-white hover:bg-rose-dark'
-      } ${className}`}
+      className={`inline-flex items-center justify-center rounded-full font-bold transition-colors ${pad} ${color} ${className}`}
     >
       <CartPlusIcon className={icon} />
       {added ? 'تمت الإضافة ✓' : 'أضف للسلة'}

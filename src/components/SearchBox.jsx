@@ -3,12 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { categoryEmoji } from '../data/categories.js'
 import { useProducts } from '../hooks/useProducts.js'
 import { searchProducts } from '../lib/search.js'
-
-function priceLabel(p) {
-  if (p.onSale && p.salePrice != null) return `${p.salePrice} ₪`
-  if (p.retailPrice != null) return `${p.retailPrice} ₪`
-  return 'تواصل معنا للسعر'
-}
+import { priceLabel } from '../lib/price.js'
 
 // Search input with a live dropdown of the top matches. Used in the header (desktop
 // center) and the mobile search bar. Enter or «عرض كل النتائج» → /search results page.

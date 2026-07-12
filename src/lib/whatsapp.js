@@ -1,7 +1,12 @@
+import { variantLabel } from './variations.js'
+
 export const WHATSAPP_NUMBER = '970593950074'
 
-export function whatsappLink(product) {
-  const msg = `مرحباً، أود الاستفسار عن المنتج: ${product.nameAr} (كود: ${product.code})`
+export function whatsappLink(product, variant = null) {
+  const code = variant?.code || product.code
+  const label = variant ? ` (${variantLabel(variant)})` : ''
+  const price = variant?.price != null ? ` — ${variant.price} ₪` : ''
+  const msg = `مرحباً، أود الاستفسار عن المنتج: ${product.nameAr}${label} (كود: ${code})${price}`
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`
 }
 
