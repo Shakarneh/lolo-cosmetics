@@ -7,6 +7,7 @@ import ProductDetail from './pages/ProductDetail.jsx'
 import Offers from './pages/Offers.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
+import Search from './pages/Search.jsx'
 import { AuthProvider } from './admin/AuthContext.jsx'
 import AdminLogin from './admin/Login.jsx'
 import AdminLayout from './admin/AdminLayout.jsx'
@@ -26,6 +27,7 @@ function App() {
             <Route path="/products" element={<Products />} />
             <Route path="/products/:category" element={<Products />} />
             <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/search" element={<Search />} />
             <Route path="/offers" element={<Offers />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
