@@ -1,10 +1,16 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
-// Cart holds only { id, qty } per line — product details are resolved from the loaded
-// catalog (useProducts) so prices stay current. Persisted to localStorage (no accounts).
+// Cart holds { id, variantKey, qty } per line — product details are resolved from the loaded
+// catalog (useProducts) so prices stay current. A product with different variations selected
+// makes separate lines (identity = id + variantKey). Persisted to localStorage (no accounts).
 const CartContext = createContext(null)
 const STORAGE_KEY = 'lolo_cart'
 const MAX_QTY = 99
+
+// stable identity for a cart line (product + chosen variation)
+export function lineKeyOf(id, variantKey) {
+  return `${id}::${variantKey ?? ''}`
+}
 
 function loadInitial() {
   try {
@@ -12,7 +18,11 @@ function loadInitial() {
     if (!Array.isArray(arr)) return []
     return arr
       .filter((x) => x && typeof x.id === 'string' && Number(x.qty) > 0)
-      .map((x) => ({ id: x.id, qty: Math.min(MAX_QTY, Math.max(1, Math.floor(Number(x.qty)))) }))
+      .map((x) => ({
+        id: x.id,
+        variantKey: x.variantKey ?? null,
+        qty: Math.min(MAX_QTY, Math.max(1, Math.floor(Number(x.qty)))),
+      }))
   } catch {
     return []
   }
@@ -29,23 +39,27 @@ export function CartProvider({ children }) {
     }
   }, [items])
 
-  const addItem = (id, qty = 1) =>
+  const addItem = (id, qty = 1, variantKey = null) =>
     setItems((prev) => {
-      const found = prev.find((i) => i.id === id)
+      const key = lineKeyOf(id, variantKey)
+      const found = prev.find((i) => lineKeyOf(i.id, i.variantKey) === key)
       if (found) {
-        return prev.map((i) => (i.id === id ? { ...i, qty: Math.min(MAX_QTY, i.qty + qty) } : i))
+        return prev.map((i) =>
+          lineKeyOf(i.id, i.variantKey) === key ? { ...i, qty: Math.min(MAX_QTY, i.qty + qty) } : i
+        )
       }
-      return [...prev, { id, qty: Math.min(MAX_QTY, Math.max(1, qty)) }]
+      return [...prev, { id, variantKey, qty: Math.min(MAX_QTY, Math.max(1, qty)) }]
     })
 
-  const setQty = (id, qty) =>
+  const setQty = (lineKey, qty) =>
     setItems((prev) =>
       qty <= 0
-        ? prev.filter((i) => i.id !== id)
-        : prev.map((i) => (i.id === id ? { ...i, qty: Math.min(MAX_QTY, qty) } : i))
+        ? prev.filter((i) => lineKeyOf(i.id, i.variantKey) !== lineKey)
+        : prev.map((i) => (lineKeyOf(i.id, i.variantKey) === lineKey ? { ...i, qty: Math.min(MAX_QTY, qty) } : i))
     )
 
-  const removeItem = (id) => setItems((prev) => prev.filter((i) => i.id !== id))
+  const removeItem = (lineKey) =>
+    setItems((prev) => prev.filter((i) => lineKeyOf(i.id, i.variantKey) !== lineKey))
   const clear = () => setItems([])
 
   const count = items.reduce((n, i) => n + i.qty, 0)

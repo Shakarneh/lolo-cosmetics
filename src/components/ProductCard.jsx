@@ -2,8 +2,10 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { categoryEmoji } from '../data/categories.js'
 import AddToCartButton from './AddToCartButton.jsx'
+import { priceLabel, hasVariations } from '../lib/price.js'
 
 function ProductCard({ product, index = 0 }) {
+  const variable = hasVariations(product)
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }}
@@ -45,7 +47,9 @@ function ProductCard({ product, index = 0 }) {
           {product.nameAr}
         </Link>
         <div className="mt-auto pt-2 flex flex-col gap-2">
-          {product.onSale && product.salePrice != null ? (
+          {variable ? (
+            <span className="font-bold text-rose-dark text-base">{priceLabel(product)}</span>
+          ) : product.onSale && product.salePrice != null ? (
             <span className="font-bold text-rose-dark text-base">
               {product.salePrice} ₪{' '}
               <span className="text-xs font-normal text-taupe line-through">{product.retailPrice} ₪</span>
@@ -55,7 +59,16 @@ function ProductCard({ product, index = 0 }) {
               {product.retailPrice != null ? `${product.retailPrice} ₪` : 'تواصل معنا للسعر'}
             </span>
           )}
-          <AddToCartButton product={product} className="w-full" />
+          {variable ? (
+            <Link
+              to={`/product/${product.id}`}
+              className="inline-flex items-center justify-center rounded-full bg-rose px-3 py-2 text-sm font-bold text-white hover:bg-rose-dark transition-colors w-full"
+            >
+              اختر الخيارات
+            </Link>
+          ) : (
+            <AddToCartButton product={product} className="w-full" />
+          )}
         </div>
       </div>
     </motion.div>

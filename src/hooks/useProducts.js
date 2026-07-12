@@ -22,6 +22,7 @@ function mapProduct(row) {
     description: row.description,
     howToUse: row.how_to_use,
     featured: row.featured,
+    variations: row.variations ?? null,
   }
 }
 

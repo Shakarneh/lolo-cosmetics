@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useCart } from '../context/CartContext.jsx'
+import { useCart, lineKeyOf } from '../context/CartContext.jsx'
 import { useProducts } from '../hooks/useProducts.js'
 import DataStatus from '../components/DataStatus.jsx'
 import { categoryEmoji } from '../data/categories.js'
+import { variantLabel } from '../lib/variations.js'
 import { cartMessage, cartWhatsappLink } from '../lib/whatsapp.js'
 import { socials } from '../data/socials.js'
 import { WhatsAppIcon, InstagramIcon, SnapchatIcon, FacebookIcon } from '../components/icons.jsx'
@@ -13,8 +14,9 @@ const instagramGradient = {
     'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
 }
 
-function unitPrice(p) {
-  return p.onSale && p.salePrice != null ? p.salePrice : p.retailPrice
+function lineUnitPrice(l) {
+  if (l.variant) return l.variant.price
+  return l.onSale && l.salePrice != null ? l.salePrice : l.retailPrice
 }
 
 function Cart() {
@@ -28,7 +30,11 @@ function Cart() {
   const lines = items
     .map((it) => {
       const p = products.find((x) => x.id === it.id)
-      return p ? { ...p, qty: it.qty } : null
+      if (!p) return null
+      const variant = it.variantKey
+        ? p.variations?.variants?.find((v) => v.key === it.variantKey) ?? null
+        : null
+      return { ...p, qty: it.qty, variant, lineKey: lineKeyOf(it.id, it.variantKey) }
     })
     .filter(Boolean)
 
@@ -48,7 +54,12 @@ function Cart() {
     )
   }
 
-  const entries = lines.map((l) => ({ nameAr: l.nameAr, code: l.code, qty: l.qty, unitPrice: unitPrice(l) }))
+  const entries = lines.map((l) => ({
+    nameAr: l.variant ? `${l.nameAr} — ${variantLabel(l.variant)}` : l.nameAr,
+    code: l.variant?.code || l.code,
+    qty: l.qty,
+    unitPrice: lineUnitPrice(l),
+  }))
   const priced = entries.filter((e) => e.unitPrice != null)
   const total = priced.reduce((sum, e) => sum + e.unitPrice * e.qty, 0)
   const somePriceless = priced.length < entries.length
@@ -74,9 +85,9 @@ function Cart() {
 
       <div className="flex flex-col gap-3">
         {lines.map((l) => {
-          const price = unitPrice(l)
+          const price = lineUnitPrice(l)
           return (
-            <div key={l.id} className="flex items-center gap-3 rounded-2xl bg-white border border-rose/15 p-3">
+            <div key={l.lineKey} className="flex items-center gap-3 rounded-2xl bg-white border border-rose/15 p-3">
               <Link to={`/product/${l.id}`} className="shrink-0 w-20 h-20 rounded-xl bg-blush/40 overflow-hidden flex items-center justify-center">
                 {l.image ? (
                   <img src={l.image} alt={l.nameAr} className="w-full h-full object-contain p-1" />
@@ -89,6 +100,9 @@ function Cart() {
                 <Link to={`/product/${l.id}`} className="block text-sm font-medium leading-snug line-clamp-2 hover:text-rose-dark transition-colors">
                   {l.nameAr}
                 </Link>
+                {l.variant && (
+                  <p className="mt-0.5 text-xs text-taupe">{variantLabel(l.variant)}</p>
+                )}
                 <p className="mt-1 text-sm font-bold text-rose-dark">
                   {price != null ? `${price} ₪` : 'تواصل معنا للسعر'}
                 </p>
@@ -98,7 +112,7 @@ function Cart() {
                 <div className="flex items-center gap-1 rounded-full border border-rose/25 p-0.5">
                   <button
                     type="button"
-                    onClick={() => setQty(l.id, l.qty - 1)}
+                    onClick={() => setQty(l.lineKey, l.qty - 1)}
                     aria-label="إنقاص"
                     className="w-7 h-7 rounded-full text-rose-dark hover:bg-blush transition-colors font-bold"
                   >
@@ -107,7 +121,7 @@ function Cart() {
                   <span className="w-7 text-center text-sm font-bold tabular-nums">{l.qty}</span>
                   <button
                     type="button"
-                    onClick={() => setQty(l.id, l.qty + 1)}
+                    onClick={() => setQty(l.lineKey, l.qty + 1)}
                     aria-label="زيادة"
                     className="w-7 h-7 rounded-full text-rose-dark hover:bg-blush transition-colors font-bold"
                   >
@@ -116,7 +130,7 @@ function Cart() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => removeItem(l.id)}
+                  onClick={() => removeItem(l.lineKey)}
                   className="text-xs text-taupe hover:text-rose-dark transition-colors"
                 >
                   إزالة
