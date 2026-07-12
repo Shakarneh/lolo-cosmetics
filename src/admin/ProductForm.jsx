@@ -5,6 +5,8 @@ import { categoryNames } from '../data/categories.js'
 import { useAuth } from './AuthContext.jsx'
 import DataStatus from '../components/DataStatus.jsx'
 import ProductImages from './ProductImages.jsx'
+import VariationsEditor from './VariationsEditor.jsx'
+import { regenVariants } from '../lib/variations.js'
 
 const emptyForm = {
   code: '',
@@ -19,6 +21,7 @@ const emptyForm = {
   how_to_use: '',
   featured: false,
   is_published: true,
+  variations: null,
 }
 
 function toForm(row) {
@@ -35,7 +38,29 @@ function toForm(row) {
     how_to_use: row.how_to_use ?? '',
     featured: row.featured,
     is_published: row.is_published,
+    variations: row.variations ?? null,
   }
+}
+
+// Clean attributes (trim names + dedupe values), regenerate combinations, coerce prices.
+// Returns null when there are no usable attributes/values.
+function cleanVariations(v) {
+  if (!v) return null
+  const attributes = (v.attributes ?? [])
+    .map((a) => ({
+      name: (a.name ?? '').trim(),
+      values: [...new Set((a.values ?? []).map((s) => s.trim()).filter(Boolean))],
+    }))
+    .filter((a) => a.name && a.values.length > 0)
+  if (attributes.length === 0) return null
+  const variants = regenVariants(attributes, v.variants ?? []).map((x) => ({
+    key: x.key,
+    values: x.values,
+    price: x.price === '' || x.price == null ? null : Number(x.price),
+    code: (x.code ?? '').trim(),
+  }))
+  if (variants.length === 0) return null
+  return { attributes, variants }
 }
 
 function dbErrorMessage(error) {
@@ -132,6 +157,16 @@ function ProductForm() {
   function validate() {
     if (!form.name_ar.trim()) return 'اسم المنتج مطلوب'
     if (!form.code.trim()) return 'كود المنتج مطلوب'
+    // when the product has variations, per-variation prices replace the base price
+    if (form.variations != null) {
+      for (const r of form.variations.variants ?? []) {
+        if (r.price !== '' && r.price != null) {
+          const p = Number(r.price)
+          if (!Number.isFinite(p) || p < 0) return 'سعر أحد الخيارات غير صالح'
+        }
+      }
+      return null
+    }
     const retail = form.retail_price === '' ? null : Number(form.retail_price)
     const sale = form.sale_price === '' ? null : Number(form.sale_price)
     if (retail != null && (!Number.isFinite(retail) || retail < 0)) return 'السعر الأساسي غير صالح'
@@ -150,19 +185,23 @@ function ProductForm() {
       setError(invalid)
       return
     }
+    const variations = cleanVariations(form.variations)
+    const hasVar = variations != null
     const payload = {
       code: form.code.trim(),
       name_ar: form.name_ar.trim(),
       brand: form.brand.trim() || null,
       category: form.category,
       size: form.size.trim() || null,
-      retail_price: form.retail_price === '' ? null : Number(form.retail_price),
-      on_sale: form.on_sale,
-      sale_price: form.on_sale && form.sale_price !== '' ? Number(form.sale_price) : null,
+      // per-variation prices replace the base price/sale when the product has variations
+      retail_price: hasVar ? null : form.retail_price === '' ? null : Number(form.retail_price),
+      on_sale: hasVar ? false : form.on_sale,
+      sale_price: !hasVar && form.on_sale && form.sale_price !== '' ? Number(form.sale_price) : null,
       description: form.description,
       how_to_use: form.how_to_use,
       featured: form.featured,
       is_published: form.is_published,
+      variations,
     }
     setSaving(true)
     setError(null)
@@ -236,37 +275,64 @@ function ProductForm() {
           </Field>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4 items-end">
-          <Field label="السعر الأساسي (₪)">
-            <input
-              type="number"
-              min="0"
-              step="0.5"
-              dir="ltr"
-              value={form.retail_price}
-              onChange={set('retail_price')}
-              placeholder="اتركه فارغاً لعرض «تواصل معنا للسعر»"
-              className={inputClass}
-            />
-          </Field>
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 py-1 cursor-pointer">
-              <input type="checkbox" checked={form.on_sale} onChange={set('on_sale')} className="w-4 h-4 accent-rose" />
-              <span className="text-sm font-medium">المنتج عليه عرض / خصم</span>
-            </label>
-            {form.on_sale && (
+        {form.variations == null && (
+          <div className="grid sm:grid-cols-2 gap-4 items-end">
+            <Field label="السعر الأساسي (₪)">
               <input
                 type="number"
                 min="0"
                 step="0.5"
                 dir="ltr"
-                value={form.sale_price}
-                onChange={set('sale_price')}
-                placeholder="سعر العرض (₪)"
+                value={form.retail_price}
+                onChange={set('retail_price')}
+                placeholder="اتركه فارغاً لعرض «تواصل معنا للسعر»"
                 className={inputClass}
               />
-            )}
+            </Field>
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2 py-1 cursor-pointer">
+                <input type="checkbox" checked={form.on_sale} onChange={set('on_sale')} className="w-4 h-4 accent-rose" />
+                <span className="text-sm font-medium">المنتج عليه عرض / خصم</span>
+              </label>
+              {form.on_sale && (
+                <input
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  dir="ltr"
+                  value={form.sale_price}
+                  onChange={set('sale_price')}
+                  placeholder="سعر العرض (₪)"
+                  className={inputClass}
+                />
+              )}
+            </div>
           </div>
+        )}
+
+        <div className="flex flex-col gap-3 border-t border-rose/10 pt-4">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.variations != null}
+              onChange={(e) =>
+                setForm({ ...form, variations: e.target.checked ? { attributes: [], variants: [] } : null })
+              }
+              className="w-4 h-4 accent-rose"
+            />
+            <span className="text-sm font-medium">هذا المنتج له عدة خيارات (تنويعات)</span>
+          </label>
+          {form.variations != null && (
+            <>
+              <p className="text-xs text-taupe">
+                عند تفعيل التنويعات يُحدَّد السعر لكل خيار بالأسفل، ويحلّ محل السعر الأساسي.
+              </p>
+              <VariationsEditor
+                value={form.variations}
+                onChange={(v) => setForm({ ...form, variations: v })}
+              />
+            </>
+          )}
         </div>
 
         <Field label="الوصف">
