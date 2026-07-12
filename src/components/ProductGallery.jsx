@@ -20,7 +20,7 @@ function ProductGallery({ images, alt }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="aspect-square w-full object-cover"
+            className="aspect-square w-full object-contain p-4"
           />
         </AnimatePresence>
       </div>

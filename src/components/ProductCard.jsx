@@ -33,7 +33,7 @@ function ProductCard({ product, index = 0 }) {
             src={product.image}
             alt={product.nameAr}
             loading="lazy"
-            className="aspect-square w-full object-cover"
+            className="aspect-square w-full object-contain bg-white p-2"
           />
         ) : (
           <div className="aspect-square w-full bg-blush/50 flex items-center justify-center text-5xl group-hover:scale-105 transition-transform duration-300">
