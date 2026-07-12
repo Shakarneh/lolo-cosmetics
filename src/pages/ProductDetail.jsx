@@ -10,6 +10,7 @@ const instagramGradient = {
     'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
 }
 import DataStatus from '../components/DataStatus.jsx'
+import AddToCartButton from '../components/AddToCartButton.jsx'
 import ProductGallery from '../components/ProductGallery.jsx'
 import ProductReviews from '../components/ProductReviews.jsx'
 import ReviewFormSection from '../components/ReviewForm.jsx'
@@ -122,6 +123,7 @@ function ProductDetail() {
         </div>
 
         <div className="flex flex-col gap-2.5">
+          <AddToCartButton product={product} size="lg" className="w-full" />
           <a
             href={whatsappLink(product)}
             target="_blank"

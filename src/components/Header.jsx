@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { categories } from '../data/categories.js'
 import SearchBox from './SearchBox.jsx'
+import CartButton from './CartButton.jsx'
 
 const navLinkClass = ({ isActive }) =>
   `px-3 py-2 text-sm font-medium transition-colors ${
@@ -111,9 +112,12 @@ function Header() {
           <NavLink to="/contact" className={navLinkClass}>
             تواصل معنا
           </NavLink>
+
+          <CartButton className="ms-1" onClick={closeAll} />
         </nav>
 
         <div className="md:hidden flex items-center">
+          <CartButton onClick={closeAll} />
           <button
             type="button"
             className="p-2 text-charcoal"
