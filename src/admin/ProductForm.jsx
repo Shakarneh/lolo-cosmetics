@@ -5,6 +5,7 @@ import { categoryNames } from '../data/categories.js'
 import { useAuth } from './AuthContext.jsx'
 import DataStatus from '../components/DataStatus.jsx'
 import ProductImages from './ProductImages.jsx'
+import ProductVideo from './ProductVideo.jsx'
 import VariationsEditor from './VariationsEditor.jsx'
 import { regenVariants } from '../lib/variations.js'
 
@@ -94,6 +95,7 @@ function ProductForm() {
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [imageCount, setImageCount] = useState(0) // feeds the video-position picker
 
   // suggest the next free LC#### code for brand-new products (owner can change it)
   useEffect(() => {
@@ -246,7 +248,11 @@ function ProductForm() {
         </Link>
       </div>
 
-      <form onSubmit={handleSubmit} className="rounded-2xl bg-white border border-rose/15 p-6 flex flex-col gap-5">
+      <form
+        id="product-form"
+        onSubmit={handleSubmit}
+        className="rounded-2xl bg-white border border-rose/15 p-6 flex flex-col gap-5"
+      >
         <Field label="اسم المنتج *">
           <input type="text" required value={form.name_ar} onChange={set('name_ar')} className={inputClass} />
         </Field>
@@ -359,15 +365,30 @@ function ProductForm() {
           </label>
         </div>
 
+      </form>
+
+      {isNew ? (
+        <p className="text-sm text-taupe text-center">ستتمكن من إضافة الصور والفيديو بعد حفظ المنتج.</p>
+      ) : (
+        <>
+          <ProductImages productId={id} onCountChange={setImageCount} />
+          <ProductVideo productId={id} imageCount={imageCount} />
+        </>
+      )}
+
+      {/* actions live at the BOTTOM of the page, under the media sections.
+          `form="product-form"` keeps the submit button wired to the form above. */}
+      <div className="rounded-2xl bg-white border border-rose/15 p-6 flex flex-col gap-4">
         {error && (
           <p role="alert" className="rounded-xl bg-rose/10 px-4 py-2.5 text-sm text-rose-dark">
             {error}
           </p>
         )}
 
-        <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-rose/10">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             type="submit"
+            form="product-form"
             disabled={saving || deleting}
             className="rounded-full bg-rose px-8 py-2.5 text-white font-bold hover:bg-rose-dark transition-colors disabled:opacity-60"
           >
@@ -387,13 +408,7 @@ function ProductForm() {
             </button>
           )}
         </div>
-      </form>
-
-      {isNew ? (
-        <p className="text-sm text-taupe text-center">ستتمكن من إضافة الصور بعد حفظ المنتج.</p>
-      ) : (
-        <ProductImages productId={id} />
-      )}
+      </div>
     </div>
   )
 }

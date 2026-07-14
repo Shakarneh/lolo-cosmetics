@@ -1,6 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabase.js'
 import { compressImage } from '../lib/compressImage.js'
+import { getCroppedBlob } from '../lib/cropImage.js'
+import ImageCropper from './ImageCropper.jsx'
+import Lightbox from '../components/Lightbox.jsx'
 
 const MAX_IMAGES = 15
 
@@ -8,10 +11,26 @@ export function imageUrl(storagePath) {
   return supabase.storage.from('product-images').getPublicUrl(storagePath).data.publicUrl
 }
 
-function ProductImages({ productId }) {
+function ProductImages({ productId, onCountChange }) {
   const [images, setImages] = useState(null) // null = loading
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
+  const [pending, setPending] = useState([]) // files queued for the crop step
+  const [cropSrc, setCropSrc] = useState(null)
+  const [lb, setLb] = useState(-1) // inspect/zoom an uploaded image, -1 = closed
+  const posRef = useRef(0)
+  const currentFile = pending[0] ?? null
+
+  // object URL for the file currently in the cropper
+  useEffect(() => {
+    if (!currentFile) {
+      setCropSrc(null)
+      return
+    }
+    const url = URL.createObjectURL(currentFile)
+    setCropSrc(url)
+    return () => URL.revokeObjectURL(url)
+  }, [currentFile])
 
   const load = useCallback(async () => {
     const { data, error: dbError } = await supabase
@@ -20,8 +39,11 @@ function ProductImages({ productId }) {
       .eq('product_id', productId)
       .order('position')
     if (dbError) setError('تعذّر تحميل الصور')
-    else setImages(data)
-  }, [productId])
+    else {
+      setImages(data)
+      onCountChange?.(data.length) // keeps the video-position picker in sync
+    }
+  }, [productId, onCountChange])
 
   useEffect(() => {
     load()
@@ -37,7 +59,8 @@ function ProductImages({ productId }) {
 
   const mainPosition = images.length ? Math.min(...images.map((i) => i.position)) : null
 
-  async function handleFiles(e) {
+  // pick files → queue them for the crop step (one modal per file)
+  function handleFiles(e) {
     const files = [...e.target.files]
     e.target.value = '' // allow picking the same file again later
     if (!files.length) return
@@ -45,34 +68,47 @@ function ProductImages({ productId }) {
       setError(`الحد الأقصى ${MAX_IMAGES} صورة لكل منتج`)
       return
     }
+    setError(null)
+    posRef.current = images.length ? Math.max(...images.map((i) => i.position)) + 1 : 0
+    setPending(files)
+  }
+
+  async function uploadBlob(blob) {
+    const path = `${productId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.webp`
+    const { error: upError } = await supabase.storage
+      .from('product-images')
+      .upload(path, blob, { contentType: 'image/webp' })
+    if (upError) throw upError
+    const { error: insError } = await supabase
+      .from('product_images')
+      .insert({ product_id: productId, storage_path: path, position: posRef.current++ })
+    if (insError) {
+      // keep DB and storage consistent: remove the orphaned file
+      await supabase.storage.from('product-images').remove([path])
+      throw insError
+    }
+  }
+
+  // cropPixels = area from the cropper, or null to upload the whole image (just compressed)
+  async function processCurrent(cropPixels) {
+    const file = currentFile
     setBusy(true)
     setError(null)
-    let position = images.length ? Math.max(...images.map((i) => i.position)) + 1 : 0
-    for (const file of files) {
-      try {
-        const blob = await compressImage(file)
-        const path = `${productId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.webp`
-        const { error: upError } = await supabase.storage
-          .from('product-images')
-          .upload(path, blob, { contentType: 'image/webp' })
-        if (upError) throw upError
-        const { error: insError } = await supabase
-          .from('product_images')
-          .insert({ product_id: productId, storage_path: path, position: position++ })
-        if (insError) {
-          // keep DB and storage consistent: remove the orphaned file
-          await supabase.storage.from('product-images').remove([path])
-          throw insError
-        }
-      } catch (err) {
-        setError(
-          String(err.message ?? '').includes('15')
-            ? `الحد الأقصى ${MAX_IMAGES} صورة لكل منتج`
-            : 'تعذّر رفع إحدى الصور — تأكد أنها صورة صالحة وحاول مجدداً'
-        )
-        break
-      }
+    try {
+      const blob = cropPixels ? await getCroppedBlob(cropSrc, cropPixels) : await compressImage(file)
+      await uploadBlob(blob)
+    } catch (err) {
+      setError(
+        String(err.message ?? '').includes('15')
+          ? `الحد الأقصى ${MAX_IMAGES} صورة لكل منتج`
+          : 'تعذّر رفع الصورة — تأكد أنها صورة صالحة وحاول مجدداً'
+      )
+      setPending([]) // abort the rest of the batch
+      await load()
+      setBusy(false)
+      return
     }
+    setPending((p) => p.slice(1))
     await load()
     setBusy(false)
   }
@@ -115,9 +151,15 @@ function ProductImages({ productId }) {
       </div>
 
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-        {images.map((img) => (
+        {images.map((img, i) => (
           <div key={img.id} className="relative group rounded-xl overflow-hidden border border-rose/15">
-            <img src={imageUrl(img.storage_path)} alt="" className="aspect-square w-full object-cover" />
+            <img
+              src={imageUrl(img.storage_path)}
+              alt=""
+              onClick={() => setLb(i)}
+              title="اضغط للتكبير"
+              className="aspect-square w-full object-cover cursor-zoom-in"
+            />
             {img.position === mainPosition && (
               <span className="absolute top-1.5 start-1.5 rounded-full bg-rose text-white text-[10px] font-bold px-2 py-0.5">
                 رئيسية
@@ -167,7 +209,8 @@ function ProductImages({ productId }) {
       </div>
 
       <p className="text-xs text-taupe">
-        الصورة «الرئيسية» هي التي تظهر في صفحات الموقع. يتم ضغط الصور تلقائياً قبل الرفع.
+        الصورة «الرئيسية» هي التي تظهر في صفحات الموقع. اضغط على أي صورة لتكبيرها ومعاينتها. يمكنك قص
+        كل صورة قبل الرفع، ويتم ضغطها تلقائياً.
       </p>
 
       {error && (
@@ -175,6 +218,17 @@ function ProductImages({ productId }) {
           {error}
         </p>
       )}
+
+      {cropSrc && (
+        <ImageCropper src={cropSrc} busy={busy} onCancel={() => setPending([])} onApply={processCurrent} />
+      )}
+
+      <Lightbox
+        images={images.map((img) => imageUrl(img.storage_path))}
+        index={lb}
+        onClose={() => setLb(-1)}
+        onIndexChange={setLb}
+      />
     </div>
   )
 }
