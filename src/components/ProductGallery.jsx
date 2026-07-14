@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import Lightbox from './Lightbox.jsx'
 
-// Gallery for a product's media: an optional video (shown first) + images.
+// Gallery for a product's media: an optional video + images.
 // Images open in a fullscreen zoomable lightbox; the video plays inline with controls.
 function ProductGallery({ images, alt, video = null, videoFirst = true }) {
   const imageSlides = images.map((src) => ({ type: 'image', src }))
@@ -11,22 +12,8 @@ function ProductGallery({ images, alt, video = null, videoFirst = true }) {
 
   const [active, setActive] = useState(0)
   const [lb, setLb] = useState(-1) // lightbox image index, -1 = closed
-  const [zoom, setZoom] = useState(false)
 
   useEffect(() => setActive(0), [images, video])
-  useEffect(() => setZoom(false), [lb])
-
-  // keyboard controls while the lightbox is open (images only)
-  useEffect(() => {
-    if (lb < 0) return
-    const onKey = (e) => {
-      if (e.key === 'Escape') setLb(-1)
-      else if (e.key === 'ArrowRight') setLb((i) => (i + 1) % images.length)
-      else if (e.key === 'ArrowLeft') setLb((i) => (i - 1 + images.length) % images.length)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [lb, images.length])
 
   const current = slides[Math.min(active, slides.length - 1)]
 
@@ -87,71 +74,7 @@ function ProductGallery({ images, alt, video = null, videoFirst = true }) {
         </div>
       )}
 
-      {/* fullscreen lightbox with click-to-zoom (images only) */}
-      {lb >= 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
-          onClick={() => setLb(-1)}
-          className="fixed inset-0 z-[100] bg-charcoal/90 overflow-auto"
-        >
-          <button
-            type="button"
-            aria-label="إغلاق"
-            onClick={(e) => {
-              e.stopPropagation()
-              setLb(-1)
-            }}
-            className="fixed top-4 end-4 z-10 w-10 h-10 rounded-full bg-white/90 text-charcoal text-2xl leading-none hover:bg-white"
-          >
-            ×
-          </button>
-
-          {images.length > 1 && (
-            <>
-              <button
-                type="button"
-                aria-label="السابق"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setLb((i) => (i - 1 + images.length) % images.length)
-                }}
-                className="fixed start-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 text-charcoal text-2xl leading-none hover:bg-white"
-              >
-                ‹
-              </button>
-              <button
-                type="button"
-                aria-label="التالي"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setLb((i) => (i + 1) % images.length)
-                }}
-                className="fixed end-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 text-charcoal text-2xl leading-none hover:bg-white"
-              >
-                ›
-              </button>
-            </>
-          )}
-
-          <div className="min-h-full flex items-center justify-center p-4">
-            <img
-              src={images[lb]}
-              alt={alt}
-              onClick={(e) => {
-                e.stopPropagation()
-                setZoom((z) => !z)
-              }}
-              className={
-                zoom
-                  ? 'max-w-none cursor-zoom-out'
-                  : 'max-h-[88vh] max-w-[92vw] object-contain cursor-zoom-in'
-              }
-            />
-          </div>
-        </motion.div>
-      )}
+      <Lightbox images={images} index={lb} onClose={() => setLb(-1)} onIndexChange={setLb} alt={alt} />
     </div>
   )
 }

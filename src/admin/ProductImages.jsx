@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase.js'
 import { compressImage } from '../lib/compressImage.js'
 import { getCroppedBlob } from '../lib/cropImage.js'
 import ImageCropper from './ImageCropper.jsx'
+import Lightbox from '../components/Lightbox.jsx'
 
 const MAX_IMAGES = 15
 
@@ -16,6 +17,7 @@ function ProductImages({ productId }) {
   const [busy, setBusy] = useState(false)
   const [pending, setPending] = useState([]) // files queued for the crop step
   const [cropSrc, setCropSrc] = useState(null)
+  const [lb, setLb] = useState(-1) // inspect/zoom an uploaded image, -1 = closed
   const posRef = useRef(0)
   const currentFile = pending[0] ?? null
 
@@ -146,9 +148,15 @@ function ProductImages({ productId }) {
       </div>
 
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-        {images.map((img) => (
+        {images.map((img, i) => (
           <div key={img.id} className="relative group rounded-xl overflow-hidden border border-rose/15">
-            <img src={imageUrl(img.storage_path)} alt="" className="aspect-square w-full object-cover" />
+            <img
+              src={imageUrl(img.storage_path)}
+              alt=""
+              onClick={() => setLb(i)}
+              title="اضغط للتكبير"
+              className="aspect-square w-full object-cover cursor-zoom-in"
+            />
             {img.position === mainPosition && (
               <span className="absolute top-1.5 start-1.5 rounded-full bg-rose text-white text-[10px] font-bold px-2 py-0.5">
                 رئيسية
@@ -198,7 +206,8 @@ function ProductImages({ productId }) {
       </div>
 
       <p className="text-xs text-taupe">
-        الصورة «الرئيسية» هي التي تظهر في صفحات الموقع. يمكنك قص كل صورة قبل الرفع، ويتم ضغطها تلقائياً.
+        الصورة «الرئيسية» هي التي تظهر في صفحات الموقع. اضغط على أي صورة لتكبيرها ومعاينتها. يمكنك قص
+        كل صورة قبل الرفع، ويتم ضغطها تلقائياً.
       </p>
 
       {error && (
@@ -210,6 +219,13 @@ function ProductImages({ productId }) {
       {cropSrc && (
         <ImageCropper src={cropSrc} busy={busy} onCancel={() => setPending([])} onApply={processCurrent} />
       )}
+
+      <Lightbox
+        images={images.map((img) => imageUrl(img.storage_path))}
+        index={lb}
+        onClose={() => setLb(-1)}
+        onIndexChange={setLb}
+      />
     </div>
   )
 }
