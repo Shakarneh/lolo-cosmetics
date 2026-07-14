@@ -5,6 +5,7 @@ import { categoryNames } from '../data/categories.js'
 import { useAuth } from './AuthContext.jsx'
 import DataStatus from '../components/DataStatus.jsx'
 import ProductImages from './ProductImages.jsx'
+import ProductVideo from './ProductVideo.jsx'
 import VariationsEditor from './VariationsEditor.jsx'
 import { regenVariants } from '../lib/variations.js'
 
@@ -390,9 +391,12 @@ function ProductForm() {
       </form>
 
       {isNew ? (
-        <p className="text-sm text-taupe text-center">ستتمكن من إضافة الصور بعد حفظ المنتج.</p>
+        <p className="text-sm text-taupe text-center">ستتمكن من إضافة الصور والفيديو بعد حفظ المنتج.</p>
       ) : (
-        <ProductImages productId={id} />
+        <>
+          <ProductImages productId={id} />
+          <ProductVideo productId={id} />
+        </>
       )}
     </div>
   )

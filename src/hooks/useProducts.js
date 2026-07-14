@@ -19,6 +19,9 @@ function mapProduct(row) {
     salePrice: row.sale_price,
     image: images[0] ?? null,
     images,
+    video: row.video_path
+      ? supabase.storage.from('product-videos').getPublicUrl(row.video_path).data.publicUrl
+      : null,
     description: row.description,
     howToUse: row.how_to_use,
     featured: row.featured,
