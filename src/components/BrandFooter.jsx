@@ -25,7 +25,7 @@ function BrandFooter() {
     <footer className="relative overflow-hidden">
       {!failed && (
         <img
-          src="/images/all-products-strip.png"
+          src="/images/all-products-strip.webp"
           alt=""
           onError={() => setFailed(true)}
           className="absolute inset-0 w-full h-full object-cover object-[85%_25%]"

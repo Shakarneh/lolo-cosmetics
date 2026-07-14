@@ -5,13 +5,13 @@ import ProductCard from '../components/ProductCard.jsx'
 import DataStatus from '../components/DataStatus.jsx'
 import { useProducts } from '../hooks/useProducts.js'
 
-// One banner file per category — extensions differ because some are the user's own photos
+// One banner file per category (all WebP — compressed from the originals for fast loading)
 const categoryBannerSrc = {
   makeup: '/images/categories/makeup.webp',
-  skincare: '/images/categories/skincare.png', // owner's photo (2026-07-11)
-  body: '/images/categories/body.png', // owner's photo (2026-07-11)
-  hair: '/images/categories/hair.png', // owner's photo (2026-07-11)
-  perfume: '/images/categories/perfume.png', // owner's photo (2026-07-11)
+  skincare: '/images/categories/skincare.webp', // owner's photo (2026-07-11)
+  body: '/images/categories/body.webp', // owner's photo (2026-07-11)
+  hair: '/images/categories/hair.webp', // owner's photo (2026-07-11)
+  perfume: '/images/categories/perfume.webp', // owner's photo (2026-07-11)
   other: '/images/categories/other.webp',
 }
 
@@ -73,7 +73,7 @@ function AllProductsBanner({ count }) {
   return (
     <div className="relative aspect-video md:aspect-auto md:h-[36rem] overflow-hidden">
       <img
-        src="/images/all-products-banner.png"
+        src="/images/all-products-banner.webp"
         alt=""
         onError={() => setFailed(true)}
         className="absolute inset-0 w-full h-full object-cover"
