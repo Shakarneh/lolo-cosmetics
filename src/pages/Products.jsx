@@ -15,6 +15,13 @@ const categoryBannerSrc = {
   other: '/images/categories/other.webp',
 }
 
+// Per-category crop focus point (object-position) — the box is much shorter than the
+// photo, so this controls which part of each photo survives the crop. Format: "X% Y%"
+// (Y=0 shows the top of the photo, Y=100 shows the bottom). Missing entry = centered.
+const categoryBannerPosition = {
+  makeup: 'object-[50%_15%]', // keep her full face + a little shoulder, crop lower body
+}
+
 // Category background header (Phase 7.4) — full-bleed image that dissolves into the page;
 // falls back to the plain header if the image is missing
 function CategoryBanner({ category, title, count }) {
@@ -30,12 +37,12 @@ function CategoryBanner({ category, title, count }) {
   }
 
   return (
-    <div className="relative aspect-video md:aspect-auto md:h-[36rem] overflow-hidden">
+    <div className="relative aspect-video md:aspect-auto md:h-[50rem] overflow-hidden">
       <img
         src={categoryBannerSrc[category]}
         alt=""
         onError={() => setFailed(true)}
-        className="absolute inset-0 w-full h-full object-cover"
+        className={`absolute inset-0 w-full h-full object-cover ${categoryBannerPosition[category] || ''}`}
       />
       {/* cream wash over the start side (right in RTL) so the title stays readable */}
       <div className="absolute inset-0 bg-gradient-to-l from-cream/90 via-cream/40 to-cream/10" />
