@@ -65,7 +65,7 @@ function ProductDetail() {
           <ProductGallery
             images={product.images}
             video={product.video}
-            videoFirst={product.videoFirst}
+            videoPosition={product.videoPosition}
             alt={product.nameAr}
           />
         ) : (

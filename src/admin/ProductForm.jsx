@@ -95,6 +95,7 @@ function ProductForm() {
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [imageCount, setImageCount] = useState(0) // feeds the video-position picker
 
   // suggest the next free LC#### code for brand-new products (owner can change it)
   useEffect(() => {
@@ -370,8 +371,8 @@ function ProductForm() {
         <p className="text-sm text-taupe text-center">ستتمكن من إضافة الصور والفيديو بعد حفظ المنتج.</p>
       ) : (
         <>
-          <ProductImages productId={id} />
-          <ProductVideo productId={id} />
+          <ProductImages productId={id} onCountChange={setImageCount} />
+          <ProductVideo productId={id} imageCount={imageCount} />
         </>
       )}
 

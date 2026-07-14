@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Lightbox from './Lightbox.jsx'
 
-// Gallery for a product's media: an optional video + images.
+// Gallery for a product's media: images plus an optional video placed at videoPosition
+// (0 = before the first image, N = after the Nth image).
 // Images open in a fullscreen zoomable lightbox; the video plays inline with controls.
-function ProductGallery({ images, alt, video = null, videoFirst = true }) {
-  const imageSlides = images.map((src) => ({ type: 'image', src }))
-  const videoSlide = video ? [{ type: 'video', src: video }] : []
-  // video first, or main image first with the video after the images
-  const slides = videoFirst ? [...videoSlide, ...imageSlides] : [...imageSlides, ...videoSlide]
+function ProductGallery({ images, alt, video = null, videoPosition = 0 }) {
+  const slides = images.map((src) => ({ type: 'image', src }))
+  if (video) {
+    const at = Math.max(0, Math.min(videoPosition, images.length))
+    slides.splice(at, 0, { type: 'video', src: video })
+  }
 
   const [active, setActive] = useState(0)
   const [lb, setLb] = useState(-1) // lightbox image index, -1 = closed

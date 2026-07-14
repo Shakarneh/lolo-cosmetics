@@ -8,22 +8,22 @@ export function videoUrl(path) {
 }
 
 // One optional video per product (stored in the product-videos bucket, path on products.video_path).
-function ProductVideo({ productId }) {
+function ProductVideo({ productId, imageCount = 0 }) {
   const [videoPath, setVideoPath] = useState(undefined) // undefined = loading, null = none
-  const [videoFirst, setVideoFirst] = useState(true)
+  const [videoPosition, setVideoPosition] = useState(0)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
 
   const load = useCallback(async () => {
     const { data, error: dbError } = await supabase
       .from('products')
-      .select('video_path, video_first')
+      .select('video_path, video_position')
       .eq('id', productId)
       .maybeSingle()
     if (dbError) setError('تعذّر تحميل الفيديو')
     else {
       setVideoPath(data?.video_path ?? null)
-      setVideoFirst(data?.video_first ?? true)
+      setVideoPosition(data?.video_position ?? 0)
     }
   }, [productId])
 
@@ -65,16 +65,17 @@ function ProductVideo({ productId }) {
     setBusy(false)
   }
 
-  async function toggleFirst(e) {
-    const val = e.target.checked
-    setVideoFirst(val)
+  async function changePosition(e) {
+    const val = Number(e.target.value)
+    const previous = videoPosition
+    setVideoPosition(val)
     const { error: updError } = await supabase
       .from('products')
-      .update({ video_first: val })
+      .update({ video_position: val })
       .eq('id', productId)
     if (updError) {
-      setError('تعذّر تحديث الإعداد')
-      setVideoFirst(!val)
+      setError('تعذّر تحديث موضع الفيديو')
+      setVideoPosition(previous)
     }
   }
 
@@ -106,12 +107,26 @@ function ProductVideo({ productId }) {
       ) : videoPath ? (
         <div className="flex flex-col gap-3">
           <video src={videoUrl(videoPath)} controls playsInline className="w-full max-h-72 rounded-xl bg-black" />
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" checked={videoFirst} onChange={toggleFirst} className="w-4 h-4 accent-rose" />
-            <span className="text-sm font-medium">اعرض الفيديو أولاً على صفحة المنتج</span>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-sm font-medium">موضع الفيديو في معرض الصور</span>
+            <select
+              value={Math.min(videoPosition, imageCount)}
+              onChange={changePosition}
+              className="w-full rounded-xl border border-rose/20 bg-white px-4 py-2.5 outline-none focus:border-rose focus:ring-2 focus:ring-rose/20 transition"
+            >
+              {Array.from({ length: imageCount + 1 }, (_, i) => (
+                <option key={i} value={i}>
+                  {i === 0
+                    ? 'في البداية (قبل كل الصور)'
+                    : i === imageCount
+                      ? 'في النهاية (بعد كل الصور)'
+                      : `بعد الصورة ${i}`}
+                </option>
+              ))}
+            </select>
           </label>
           <p className="-mt-1 text-xs text-taupe">
-            عند إيقافه، تظهر الصورة الرئيسية أولاً ويأتي الفيديو بعد الصور.
+            اختر أين يظهر الفيديو بين صور المنتج على صفحة المنتج.
           </p>
           <button
             type="button"

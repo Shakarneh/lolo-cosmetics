@@ -11,7 +11,7 @@ export function imageUrl(storagePath) {
   return supabase.storage.from('product-images').getPublicUrl(storagePath).data.publicUrl
 }
 
-function ProductImages({ productId }) {
+function ProductImages({ productId, onCountChange }) {
   const [images, setImages] = useState(null) // null = loading
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -39,8 +39,11 @@ function ProductImages({ productId }) {
       .eq('product_id', productId)
       .order('position')
     if (dbError) setError('تعذّر تحميل الصور')
-    else setImages(data)
-  }, [productId])
+    else {
+      setImages(data)
+      onCountChange?.(data.length) // keeps the video-position picker in sync
+    }
+  }, [productId, onCountChange])
 
   useEffect(() => {
     load()
