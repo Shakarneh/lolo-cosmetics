@@ -62,7 +62,12 @@ function ProductDetail() {
         transition={{ duration: 0.45, ease: 'easeOut' }}
       >
         {product.images.length > 0 || product.video ? (
-          <ProductGallery images={product.images} video={product.video} alt={product.nameAr} />
+          <ProductGallery
+            images={product.images}
+            video={product.video}
+            videoFirst={product.videoFirst}
+            alt={product.nameAr}
+          />
         ) : (
           <div className="rounded-3xl overflow-hidden border border-rose/15 bg-white">
             <div className="aspect-square w-full bg-blush/50 flex flex-col items-center justify-center gap-3">

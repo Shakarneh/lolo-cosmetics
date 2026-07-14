@@ -22,6 +22,7 @@ function mapProduct(row) {
     video: row.video_path
       ? supabase.storage.from('product-videos').getPublicUrl(row.video_path).data.publicUrl
       : null,
+    videoFirst: row.video_first ?? true,
     description: row.description,
     howToUse: row.how_to_use,
     featured: row.featured,

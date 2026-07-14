@@ -10,17 +10,21 @@ export function videoUrl(path) {
 // One optional video per product (stored in the product-videos bucket, path on products.video_path).
 function ProductVideo({ productId }) {
   const [videoPath, setVideoPath] = useState(undefined) // undefined = loading, null = none
+  const [videoFirst, setVideoFirst] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
 
   const load = useCallback(async () => {
     const { data, error: dbError } = await supabase
       .from('products')
-      .select('video_path')
+      .select('video_path, video_first')
       .eq('id', productId)
       .maybeSingle()
     if (dbError) setError('تعذّر تحميل الفيديو')
-    else setVideoPath(data?.video_path ?? null)
+    else {
+      setVideoPath(data?.video_path ?? null)
+      setVideoFirst(data?.video_first ?? true)
+    }
   }, [productId])
 
   useEffect(() => {
@@ -61,6 +65,19 @@ function ProductVideo({ productId }) {
     setBusy(false)
   }
 
+  async function toggleFirst(e) {
+    const val = e.target.checked
+    setVideoFirst(val)
+    const { error: updError } = await supabase
+      .from('products')
+      .update({ video_first: val })
+      .eq('id', productId)
+    if (updError) {
+      setError('تعذّر تحديث الإعداد')
+      setVideoFirst(!val)
+    }
+  }
+
   async function handleDelete() {
     if (!window.confirm('حذف فيديو المنتج؟')) return
     setBusy(true)
@@ -89,6 +106,13 @@ function ProductVideo({ productId }) {
       ) : videoPath ? (
         <div className="flex flex-col gap-3">
           <video src={videoUrl(videoPath)} controls playsInline className="w-full max-h-72 rounded-xl bg-black" />
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" checked={videoFirst} onChange={toggleFirst} className="w-4 h-4 accent-rose" />
+            <span className="text-sm font-medium">اعرض الفيديو أولاً على صفحة المنتج</span>
+          </label>
+          <p className="-mt-1 text-xs text-taupe">
+            عند إيقافه، تظهر الصورة الرئيسية أولاً ويأتي الفيديو بعد الصور.
+          </p>
           <button
             type="button"
             disabled={busy}

@@ -3,11 +3,11 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 // Gallery for a product's media: an optional video (shown first) + images.
 // Images open in a fullscreen zoomable lightbox; the video plays inline with controls.
-function ProductGallery({ images, alt, video = null }) {
-  const slides = [
-    ...(video ? [{ type: 'video', src: video }] : []),
-    ...images.map((src) => ({ type: 'image', src })),
-  ]
+function ProductGallery({ images, alt, video = null, videoFirst = true }) {
+  const imageSlides = images.map((src) => ({ type: 'image', src }))
+  const videoSlide = video ? [{ type: 'video', src: video }] : []
+  // video first, or main image first with the video after the images
+  const slides = videoFirst ? [...videoSlide, ...imageSlides] : [...imageSlides, ...videoSlide]
 
   const [active, setActive] = useState(0)
   const [lb, setLb] = useState(-1) // lightbox image index, -1 = closed
