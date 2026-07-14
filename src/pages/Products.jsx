@@ -30,7 +30,7 @@ function CategoryBanner({ category, title, count }) {
   }
 
   return (
-    <div className="relative aspect-video md:aspect-auto md:h-[28rem] overflow-hidden">
+    <div className="relative aspect-video md:aspect-auto md:h-[36rem] overflow-hidden">
       <img
         src={categoryBannerSrc[category]}
         alt=""
@@ -40,7 +40,7 @@ function CategoryBanner({ category, title, count }) {
       {/* cream wash over the start side (right in RTL) so the title stays readable */}
       <div className="absolute inset-0 bg-gradient-to-l from-cream/90 via-cream/40 to-cream/10" />
       {/* dissolve into the page background */}
-      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-cream to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-cream to-transparent" />
       <div className="relative h-full mx-auto max-w-6xl px-4 flex flex-col justify-center items-start">
         <h1 className="text-4xl md:text-5xl font-bold text-rose-dark">{title}</h1>
         <p className="text-lg text-charcoal/80 mt-2">{count} منتج</p>
@@ -64,7 +64,7 @@ function AllProductsBanner({ count }) {
   }
 
   return (
-    <div className="relative aspect-video md:aspect-auto md:h-[28rem] overflow-hidden">
+    <div className="relative aspect-video md:aspect-auto md:h-[36rem] overflow-hidden">
       <img
         src="/images/all-products-banner.png"
         alt=""
@@ -72,7 +72,7 @@ function AllProductsBanner({ count }) {
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-l from-cream/80 via-cream/30 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-cream to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-cream to-transparent" />
       <div className="relative h-full mx-auto max-w-6xl px-4 flex flex-col justify-center items-start">
         <h1 className="text-4xl md:text-5xl font-bold text-rose-dark">كل المنتجات</h1>
         <p className="text-lg text-charcoal/80 mt-2">{count} منتج</p>
@@ -108,7 +108,7 @@ function Products() {
     ) : (
       <AllProductsBanner count={list.length} />
     )}
-    <section className="mx-auto max-w-6xl px-4 pb-14 pt-6">
+    <section className="mx-auto max-w-6xl px-4 pb-14 pt-14">
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {list.map((p, i) => (
           <ProductCard key={p.id} product={p} index={i} />
