@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { generalWhatsappLink } from '../lib/whatsapp.js'
 import { socials } from '../data/socials.js'
 import { WhatsAppIcon, InstagramIcon, SnapchatIcon, FacebookIcon } from './icons.jsx'
@@ -17,6 +18,8 @@ const socialBtn =
 // the very bottom of the page so the photo runs down to the page edge.
 function BrandFooter() {
   const [failed, setFailed] = useState(false)
+  const { pathname } = useLocation()
+  const hideSocials = pathname === '/about'
 
   return (
     <footer className="relative overflow-hidden">
@@ -46,50 +49,53 @@ function BrandFooter() {
               <p className="text-base md:text-lg text-taupe">جودة عالية · عناية فاخرة · أسعار مناسبة</p>
               <p className="text-base md:text-lg text-taupe">توصيل للضفة والقدس 🚚</p>
             </div>
-            {/* social links — on the physical LEFT (order-2 = end = left in RTL) */}
-            <div className="order-2 flex flex-wrap items-center justify-center gap-3 md:w-52 md:flex-col md:flex-nowrap md:items-stretch">
-              <a
-                href={generalWhatsappLink()}
-                target="_blank"
-                rel="noreferrer"
-                className={`${socialBtn} bg-[#25D366]`}
-              >
-                <WhatsAppIcon className="w-5 h-5" />
-                واتساب
-              </a>
-              <a
-                href={socials.instagram}
-                target="_blank"
-                rel="noreferrer"
-                style={instagramGradient}
-                className={socialBtn}
-              >
-                <InstagramIcon className="w-5 h-5" />
-                انستغرام
-              </a>
-              {socials.snapchat && (
+            {/* social links — on the physical LEFT (order-2 = end = left in RTL);
+                hidden on the About page since it already has its own social buttons */}
+            {!hideSocials && (
+              <div className="order-2 flex flex-wrap items-center justify-center gap-3 md:w-52 md:flex-col md:flex-nowrap md:items-stretch">
                 <a
-                  href={socials.snapchat}
+                  href={generalWhatsappLink()}
                   target="_blank"
                   rel="noreferrer"
-                  className={`${socialBtn} bg-[#FFFC00] !text-charcoal`}
+                  className={`${socialBtn} bg-[#25D366]`}
                 >
-                  <SnapchatIcon className="w-5 h-5" />
-                  سناب شات
+                  <WhatsAppIcon className="w-5 h-5" />
+                  واتساب
                 </a>
-              )}
-              {socials.facebook && (
                 <a
-                  href={socials.facebook}
+                  href={socials.instagram}
                   target="_blank"
                   rel="noreferrer"
-                  className={`${socialBtn} bg-[#1877F2]`}
+                  style={instagramGradient}
+                  className={socialBtn}
                 >
-                  <FacebookIcon className="w-5 h-5" />
-                  فيسبوك
+                  <InstagramIcon className="w-5 h-5" />
+                  انستغرام
                 </a>
-              )}
-            </div>
+                {socials.snapchat && (
+                  <a
+                    href={socials.snapchat}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`${socialBtn} bg-[#FFFC00] !text-charcoal`}
+                  >
+                    <SnapchatIcon className="w-5 h-5" />
+                    سناب شات
+                  </a>
+                )}
+                {socials.facebook && (
+                  <a
+                    href={socials.facebook}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`${socialBtn} bg-[#1877F2]`}
+                  >
+                    <FacebookIcon className="w-5 h-5" />
+                    فيسبوك
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
