@@ -247,7 +247,11 @@ function ProductForm() {
         </Link>
       </div>
 
-      <form onSubmit={handleSubmit} className="rounded-2xl bg-white border border-rose/15 p-6 flex flex-col gap-5">
+      <form
+        id="product-form"
+        onSubmit={handleSubmit}
+        className="rounded-2xl bg-white border border-rose/15 p-6 flex flex-col gap-5"
+      >
         <Field label="اسم المنتج *">
           <input type="text" required value={form.name_ar} onChange={set('name_ar')} className={inputClass} />
         </Field>
@@ -360,15 +364,30 @@ function ProductForm() {
           </label>
         </div>
 
+      </form>
+
+      {isNew ? (
+        <p className="text-sm text-taupe text-center">ستتمكن من إضافة الصور والفيديو بعد حفظ المنتج.</p>
+      ) : (
+        <>
+          <ProductImages productId={id} />
+          <ProductVideo productId={id} />
+        </>
+      )}
+
+      {/* actions live at the BOTTOM of the page, under the media sections.
+          `form="product-form"` keeps the submit button wired to the form above. */}
+      <div className="rounded-2xl bg-white border border-rose/15 p-6 flex flex-col gap-4">
         {error && (
           <p role="alert" className="rounded-xl bg-rose/10 px-4 py-2.5 text-sm text-rose-dark">
             {error}
           </p>
         )}
 
-        <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-rose/10">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             type="submit"
+            form="product-form"
             disabled={saving || deleting}
             className="rounded-full bg-rose px-8 py-2.5 text-white font-bold hover:bg-rose-dark transition-colors disabled:opacity-60"
           >
@@ -388,16 +407,7 @@ function ProductForm() {
             </button>
           )}
         </div>
-      </form>
-
-      {isNew ? (
-        <p className="text-sm text-taupe text-center">ستتمكن من إضافة الصور والفيديو بعد حفظ المنتج.</p>
-      ) : (
-        <>
-          <ProductImages productId={id} />
-          <ProductVideo productId={id} />
-        </>
-      )}
+      </div>
     </div>
   )
 }
