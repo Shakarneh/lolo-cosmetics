@@ -1,6 +1,7 @@
-import { WhatsAppIcon, InstagramIcon } from '../components/icons.jsx'
+import { WhatsAppIcon, InstagramIcon, SnapchatIcon } from '../components/icons.jsx'
 import Reveal from '../components/Reveal.jsx'
 import { generalWhatsappLink } from '../lib/whatsapp.js'
+import { socials } from '../data/socials.js'
 
 const instagramGradient = {
   backgroundImage:
@@ -18,8 +19,9 @@ function About() {
       </Reveal>
       <Reveal delay={0.2}>
         <p className="text-lg md:text-xl leading-relaxed text-charcoal">
-          لولو كوزمتكس — متجرك المفضل لمنتجات التجميل والعناية الشخصية.
-          نختار لك منتجات بجودة عالية وأسعار مناسبة، لأن إطلالتك اليومية تبدأ من هنا.
+          لولو كوزمتكس هو وجهتك لكل ما يخص جمالك وعنايتك اليومية — تشكيلة متنوعة من المكياج
+          والعناية بالبشرة والعطور، اخترناها بعناية لتناسب ذوقك وتدوم معك. جودة نثق بها، وأسعار
+          صُمّمت لتكون بمتناول الجميع.
         </p>
       </Reveal>
       <Reveal delay={0.3}>
@@ -36,7 +38,7 @@ function About() {
           تواصل معنا واتساب
         </a>
         <a
-          href="https://instagram.com/lolo_cosmetice"
+          href={socials.instagram}
           target="_blank"
           rel="noreferrer"
           style={instagramGradient}
@@ -44,6 +46,15 @@ function About() {
         >
           <InstagramIcon className="w-6 h-6" />
           تابعنا على انستغرام
+        </a>
+        <a
+          href={socials.snapchat}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 rounded-full bg-[#FFFC00] px-6 py-3 text-charcoal text-lg font-bold hover:opacity-90 transition-opacity"
+        >
+          <SnapchatIcon className="w-6 h-6" />
+          سناب شات
         </a>
       </Reveal>
     </section>
