@@ -74,7 +74,7 @@ function Contact() {
         <div className="rounded-2xl bg-white border border-rose/15 px-8 py-6 flex flex-col gap-2">
           <p className="text-lg font-bold text-rose-dark">التوصيل 🚚</p>
           <p className="text-base text-charcoal">نوصل طلباتكم لكل مناطق الضفة والقدس.</p>
-          <p className="text-base text-taupe">التفاصيل والتكلفة حسب المنطقة — اسألنا على واتساب.</p>
+          <p className="text-base text-taupe">التفاصيل والتكلفة حسب المنطقة.</p>
         </div>
       </Reveal>
     </section>
