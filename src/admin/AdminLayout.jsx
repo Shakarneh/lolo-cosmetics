@@ -1,4 +1,4 @@
-import { Link, Navigate, NavLink, Outlet } from 'react-router-dom'
+import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from './AuthContext.jsx'
 
 export const roleNames = { owner: 'مالك', partner: 'شريك', employee: 'موظف' }
@@ -10,6 +10,8 @@ const tabClass = ({ isActive }) =>
 
 function AdminLayout() {
   const { session, profile, checking, signOut } = useAuth()
+  const { pathname } = useLocation()
+  const isFullWidth = pathname.startsWith('/admin/analytics')
 
   if (checking) {
     return (
@@ -67,18 +69,26 @@ function AdminLayout() {
           <NavLink to="/admin/products" className={tabClass}>
             المنتجات
           </NavLink>
+          <NavLink to="/admin/packages" className={tabClass}>
+            البكجات
+          </NavLink>
           <NavLink to="/admin/reviews" className={tabClass}>
             التقييمات
           </NavLink>
           {profile.role === 'owner' && (
-            <NavLink to="/admin/users" className={tabClass}>
-              المستخدمين
-            </NavLink>
+            <>
+              <NavLink to="/admin/analytics" className={tabClass}>
+                الإحصائيات
+              </NavLink>
+              <NavLink to="/admin/users" className={tabClass}>
+                المستخدمين
+              </NavLink>
+            </>
           )}
         </nav>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-8">
+      <main className={isFullWidth ? 'px-4 py-8' : 'mx-auto max-w-6xl px-4 py-8'}>
         <Outlet />
       </main>
     </div>

@@ -25,6 +25,14 @@ function Dashboard() {
           <p className="text-sm text-taupe">عرض وبحث كل المنتجات</p>
         </Link>
         <Link
+          to="/admin/packages"
+          className="rounded-2xl bg-white border border-rose/15 p-6 flex flex-col items-center gap-2 text-center hover:border-rose/40 hover:shadow-md transition"
+        >
+          <span className="text-4xl">🎁</span>
+          <h2 className="font-bold text-rose-dark">إدارة البكجات</h2>
+          <p className="text-sm text-taupe">تجميع عدة منتجات في بكج واحد</p>
+        </Link>
+        <Link
           to="/admin/reviews"
           className="rounded-2xl bg-white border border-rose/15 p-6 flex flex-col items-center gap-2 text-center hover:border-rose/40 hover:shadow-md transition"
         >
@@ -42,16 +50,16 @@ function Dashboard() {
             <p className="text-sm text-taupe">حسابات الموظفين — للمالك فقط</p>
           </Link>
         )}
-        {[{ emoji: '📊', title: 'الإحصائيات', note: 'قريباً' }].map((card) => (
-          <div
-            key={card.title}
-            className="rounded-2xl bg-white border border-rose/15 p-6 flex flex-col items-center gap-2 text-center opacity-70"
+        {profile.role === 'owner' && (
+          <Link
+            to="/admin/analytics"
+            className="rounded-2xl bg-white border border-rose/15 p-6 flex flex-col items-center gap-2 text-center hover:border-rose/40 hover:shadow-md transition"
           >
-            <span className="text-4xl">{card.emoji}</span>
-            <h2 className="font-bold">{card.title}</h2>
-            <p className="text-sm text-taupe">{card.note}</p>
-          </div>
-        ))}
+            <span className="text-4xl">📊</span>
+            <h2 className="font-bold text-rose-dark">الإحصائيات</h2>
+            <p className="text-sm text-taupe">الزيارات اليومية وأكثر الصفحات زيارة — للمالك فقط</p>
+          </Link>
+        )}
       </div>
     </div>
   )

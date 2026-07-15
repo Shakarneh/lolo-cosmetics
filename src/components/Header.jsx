@@ -101,6 +101,10 @@ function Header() {
             </AnimatePresence>
           </div>
 
+          <NavLink to="/packages" className={navLinkClass}>
+            البكجات
+          </NavLink>
+
           <NavLink to="/offers" className={navLinkClass}>
             عروض وخصومات
           </NavLink>
@@ -202,6 +206,9 @@ function Header() {
                   {c.name}
                 </Link>
               ))}
+              <Link to="/packages" onClick={closeAll} className="rounded-xl px-3 py-2.5 font-medium hover:bg-blush/60">
+                البكجات
+              </Link>
               <Link to="/offers" onClick={closeAll} className="rounded-xl px-3 py-2.5 font-medium hover:bg-blush/60">
                 عروض وخصومات
               </Link>
