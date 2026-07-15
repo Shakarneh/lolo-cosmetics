@@ -36,3 +36,15 @@ export function cartMessage(entries) {
 export function cartWhatsappLink(entries) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(cartMessage(entries))}`
 }
+
+// Package order message: bundle name + every included product + the bundle price.
+// items: [{ nameAr, code, quantity }]
+export function packageMessage(pkg, items) {
+  const lines = items.map((e) => `• ${e.nameAr} (كود: ${e.code}) × ${e.quantity}`)
+  const priceLine = pkg.price != null ? `\n\nسعر البكج: ${pkg.price} ₪` : ''
+  return `مرحباً لولو كوزمتكس 🌸\nأود طلب البكج «${pkg.nameAr}»:\n\n${lines.join('\n')}${priceLine}`
+}
+
+export function packageWhatsappLink(pkg, items) {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(packageMessage(pkg, items))}`
+}
