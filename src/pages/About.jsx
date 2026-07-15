@@ -18,14 +18,14 @@ function About() {
         <h1 className="text-3xl md:text-4xl font-bold text-rose-dark">من نحن</h1>
       </Reveal>
       <Reveal delay={0.2}>
-        <p className="text-lg md:text-xl leading-relaxed text-charcoal">
+        <p className="text-lg md:text-2xl leading-relaxed text-charcoal">
           لولو كوزمتكس هو وجهتك لكل ما يخص جمالك وعنايتك اليومية — تشكيلة متنوعة من المكياج
           والعناية بالبشرة والعطور، اخترناها بعناية لتناسب ذوقك وتدوم معك. جودة نثق بها، وأسعار
           صُمّمت لتكون بمتناول الجميع.
         </p>
       </Reveal>
       <Reveal delay={0.3}>
-        <p className="text-lg text-taupe">توصيل للضفة والقدس 🚚</p>
+        <p className="text-2xl text-taupe">توصيل للضفة والقدس 🚚</p>
       </Reveal>
       <Reveal delay={0.4} className="flex flex-wrap items-center justify-center gap-3">
         <a
