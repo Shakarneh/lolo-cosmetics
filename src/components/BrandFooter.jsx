@@ -19,7 +19,7 @@ const socialBtn =
 function BrandFooter() {
   const [failed, setFailed] = useState(false)
   const { pathname } = useLocation()
-  const hideSocials = pathname === '/about'
+  const hideSocials = pathname === '/about' || pathname === '/contact'
 
   return (
     <footer className="relative overflow-hidden">
@@ -50,7 +50,7 @@ function BrandFooter() {
               <p className="text-base md:text-lg text-taupe">توصيل للضفة والقدس 🚚</p>
             </div>
             {/* social links — on the physical LEFT (order-2 = end = left in RTL);
-                hidden on the About page since it already has its own social buttons */}
+                hidden on About/Contact since those pages already have their own social buttons */}
             {!hideSocials && (
               <div className="order-2 flex flex-wrap items-center justify-center gap-3 md:w-52 md:flex-col md:flex-nowrap md:items-stretch">
                 <a
