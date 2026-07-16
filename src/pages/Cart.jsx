@@ -90,7 +90,7 @@ function Cart() {
             <div key={l.lineKey} className="flex items-center gap-3 rounded-2xl bg-white border border-rose/15 p-3">
               <Link to={`/product/${l.id}`} className="shrink-0 w-20 h-20 rounded-xl bg-blush/40 overflow-hidden flex items-center justify-center">
                 {l.image ? (
-                  <img src={l.image} alt={l.nameAr} className="w-full h-full object-contain p-1" />
+                  <img src={l.image} alt={l.nameAr} loading="lazy" className="w-full h-full object-contain p-1" />
                 ) : (
                   <span className="text-3xl">{categoryEmoji[l.category] ?? '🛍️'}</span>
                 )}
