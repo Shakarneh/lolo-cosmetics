@@ -77,7 +77,7 @@ function SearchBox({ autoFocus = false, onNavigate }) {
                 >
                   <span className="shrink-0 w-11 h-11 rounded-lg bg-blush/40 overflow-hidden flex items-center justify-center">
                     {p.image ? (
-                      <img src={p.image} alt="" className="w-full h-full object-contain p-0.5" />
+                      <img src={p.image} alt="" loading="lazy" className="w-full h-full object-contain p-0.5" />
                     ) : (
                       <span className="text-xl">{categoryEmoji[p.category] ?? '🛍️'}</span>
                     )}
