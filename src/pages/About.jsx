@@ -12,7 +12,7 @@ function About() {
   return (
     <section className="mx-auto max-w-3xl px-4 py-16 text-center flex flex-col items-center gap-6">
       <Reveal>
-        <img src="/logo.jpeg" alt="لولو كوزمتكس" className="w-28 h-28 rounded-full shadow-md" />
+        <img src="/logo-sm.webp" alt="لولو كوزمتكس" className="w-28 h-28 rounded-full shadow-md" />
       </Reveal>
       <Reveal delay={0.1}>
         <h1 className="text-3xl md:text-4xl font-bold text-rose-dark">من نحن</h1>

@@ -43,7 +43,7 @@ function BrandFooter() {
           <div className="flex flex-col items-center gap-8 md:flex-row md:items-center md:gap-12">
             {/* brand text — centered (sits to the RIGHT of the social links in RTL) */}
             <div className="order-1 flex flex-col items-center text-center gap-3">
-              <img src="/logo.jpeg" alt="لولو كوزمتكس" className="w-16 h-16 rounded-full shadow-sm" />
+              <img src="/logo-sm.webp" alt="لولو كوزمتكس" loading="lazy" className="w-16 h-16 rounded-full shadow-sm" />
               <p className="text-3xl md:text-4xl font-bold text-rose-dark leading-relaxed">
                 إطلالتك اليومية تبدأ من هنا 🌸
               </p>

@@ -44,7 +44,7 @@ function AdminLayout() {
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-rose/15">
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <img src="/logo.jpeg" alt="لولو" className="w-9 h-9 rounded-full object-cover" />
+            <img src="/logo-sm.webp" alt="لولو" className="w-9 h-9 rounded-full object-cover" />
             <span className="font-bold text-rose-dark">لوحة التحكم</span>
             <span className="rounded-full bg-blush px-3 py-1 text-xs font-medium text-rose-dark">
               {roleNames[profile.role] ?? profile.role}

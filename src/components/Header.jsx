@@ -25,7 +25,7 @@ function Header() {
     <header className="sticky top-0 z-50 bg-cream/90 backdrop-blur border-b border-rose/20">
       <div className="mx-auto max-w-6xl px-4 h-16 flex flex-row-reverse items-center justify-between">
         <Link to="/" className="flex flex-row-reverse items-center gap-3" onClick={closeAll}>
-          <img src="/logo.jpeg" alt="لولو كوزمتكس" className="w-11 h-11 rounded-full" />
+          <img src="/logo-sm.webp" alt="لولو كوزمتكس" className="w-11 h-11 rounded-full" />
           <span className="leading-tight text-start">
             <span className="block text-lg font-bold text-rose-dark">لولو كوزمتكس</span>
             <span className="block text-[11px] tracking-[0.2em] text-taupe font-serif">

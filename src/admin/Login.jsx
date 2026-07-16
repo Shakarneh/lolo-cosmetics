@@ -37,7 +37,7 @@ function Login() {
     <div className="min-h-screen flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-sm rounded-3xl bg-white border border-rose/15 p-8 shadow-sm">
         <div className="flex flex-col items-center gap-3 mb-8 text-center">
-          <img src="/logo.jpeg" alt="لولو كوزمتكس" className="w-20 h-20 rounded-full object-cover" />
+          <img src="/logo-sm.webp" alt="لولو كوزمتكس" className="w-20 h-20 rounded-full object-cover" />
           <h1 className="text-2xl font-bold text-rose-dark">لوحة التحكم</h1>
           <p className="text-sm text-taupe">تسجيل الدخول لإدارة المتجر</p>
         </div>
