@@ -4,6 +4,25 @@ import { motion } from 'framer-motion'
 import Header from './Header.jsx'
 import BrandFooter from './BrandFooter.jsx'
 import { logPageView } from '../lib/analytics.js'
+import { categoryNames } from '../data/categories.js'
+
+const BRAND = 'لولو كوزمتكس'
+
+// per-route page titles (SEO + browser tab); product/package details set
+// their own title once the item loads, so they return null here
+function titleFor(pathname) {
+  if (pathname === '/') return `${BRAND} | Lolo Cosmetics`
+  if (pathname === '/products') return `كل المنتجات — ${BRAND}`
+  const cat = pathname.match(/^\/products\/([^/]+)$/)
+  if (cat) return `${categoryNames[cat[1]] ?? 'المنتجات'} — ${BRAND}`
+  if (pathname === '/offers') return `عروض وخصومات — ${BRAND}`
+  if (pathname === '/packages') return `البكجات — ${BRAND}`
+  if (pathname === '/contact') return `تواصل معنا — ${BRAND}`
+  if (pathname === '/about') return `من نحن — ${BRAND}`
+  if (pathname === '/cart') return `سلة التسوق — ${BRAND}`
+  if (pathname.startsWith('/search')) return `البحث — ${BRAND}`
+  return null
+}
 
 function Layout() {
   const { pathname } = useLocation()
@@ -12,6 +31,8 @@ function Layout() {
   useEffect(() => {
     // قفزة فورية لأعلى الصفحة عند تغيير المسار — تتجاوز scroll-behavior: smooth
     window.scrollTo({ top: 0, behavior: 'instant' })
+    const title = titleFor(pathname)
+    if (title) document.title = title
     // React StrictMode (dev only) runs this effect twice per navigation — the ref
     // survives that double-invoke and stops the second call from double-logging.
     if (loggedPathRef.current !== pathname) {
