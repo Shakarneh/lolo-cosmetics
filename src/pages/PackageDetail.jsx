@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { WhatsAppIcon, InstagramIcon, SnapchatIcon } from '../components/icons.jsx'
@@ -17,6 +18,11 @@ function PackageDetail() {
   const { id } = useParams()
   const { packages, loading: loadingPkgs, error: errorPkgs, refetch: refetchPkgs } = usePackages()
   const { products, loading: loadingProducts, error: errorProducts, refetch: refetchProducts } = useProducts()
+
+  const pkgName = packages.find((p) => p.id === id)?.nameAr
+  useEffect(() => {
+    if (pkgName) document.title = `${pkgName} — لولو كوزمتكس`
+  }, [pkgName])
 
   if (loadingPkgs || errorPkgs) return <DataStatus error={errorPkgs} onRetry={refetchPkgs} label="البكجات" />
   if (loadingProducts || errorProducts) return <DataStatus error={errorProducts} onRetry={refetchProducts} />
@@ -98,6 +104,7 @@ function PackageDetail() {
                   <img
                     src={i.product.image}
                     alt=""
+                    loading="lazy"
                     className="w-12 h-12 rounded-lg object-contain bg-white border border-rose/10 p-1"
                   />
                 ) : (
