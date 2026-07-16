@@ -96,8 +96,19 @@ Deno.serve(async (req) => {
           email_confirm: true,
         })
         if (error) throw error
-        if (full_name)
-          await admin.from('profiles').update({ full_name }).eq('id', data.user.id)
+        // since migration 13 there is no auto-profile trigger — the profile
+        // (and with it the employee role) is created here, deliberately
+        const { error: profileError } = await admin.from('profiles').insert({
+          id: data.user.id,
+          email,
+          full_name: full_name || null,
+          role: 'employee',
+        })
+        if (profileError) {
+          // don't leave a profile-less auth user behind
+          await admin.auth.admin.deleteUser(data.user.id)
+          throw profileError
+        }
         return json({ ok: true })
       }
 

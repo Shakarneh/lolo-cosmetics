@@ -1,13 +1,34 @@
-import { useState } from 'react'
-import { supabase } from '../lib/supabase.js'
+import { useEffect, useRef, useState } from 'react'
 import { compressImage } from '../lib/compressImage.js'
 import Reveal from './Reveal.jsx'
 
 const MAX_PHOTOS = 3
 const MAX_CHARS = 200
 
+// Turnstile site key — public by design (domain-bound). The secret key
+// lives ONLY in the Supabase Edge Function's secrets.
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY
+
 const inputClass =
   'w-full rounded-xl border border-rose/20 bg-white px-4 py-2.5 outline-none focus:border-rose focus:ring-2 focus:ring-rose/20 transition'
+
+// loads the Turnstile script once, shared across mounts
+function loadTurnstile() {
+  return new Promise((resolve) => {
+    if (window.turnstile) return resolve(window.turnstile)
+    const existing = document.getElementById('cf-turnstile-script')
+    if (existing) {
+      existing.addEventListener('load', () => resolve(window.turnstile))
+      return
+    }
+    const script = document.createElement('script')
+    script.id = 'cf-turnstile-script'
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+    script.async = true
+    script.onload = () => resolve(window.turnstile)
+    document.head.appendChild(script)
+  })
+}
 
 function ReviewForm({ productId }) {
   const [name, setName] = useState('')
@@ -19,6 +40,31 @@ function ReviewForm({ productId }) {
   const [done, setDone] = useState(false)
   const [photoWarning, setPhotoWarning] = useState(false)
   const [error, setError] = useState(null)
+  const [token, setToken] = useState('')
+  const widgetRef = useRef(null)
+  const widgetIdRef = useRef(null)
+
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY) return
+    let cancelled = false
+    loadTurnstile().then((turnstile) => {
+      if (cancelled || !turnstile || !widgetRef.current || widgetIdRef.current !== null) return
+      widgetIdRef.current = turnstile.render(widgetRef.current, {
+        sitekey: TURNSTILE_SITE_KEY,
+        language: 'ar',
+        callback: (t) => setToken(t),
+        'expired-callback': () => setToken(''),
+        'error-callback': () => setToken(''),
+      })
+    })
+    return () => {
+      cancelled = true
+      if (widgetIdRef.current !== null && window.turnstile) {
+        window.turnstile.remove(widgetIdRef.current)
+        widgetIdRef.current = null
+      }
+    }
+  }, [])
 
   function handlePhotos(e) {
     const files = [...e.target.files]
@@ -32,45 +78,55 @@ function ReviewForm({ productId }) {
       setError('اختر عدد النجوم أولاً')
       return
     }
+    if (!token) {
+      setError('يرجى الانتظار لحظة حتى يكتمل التحقق الأمني ثم أعد المحاولة')
+      return
+    }
     setSubmitting(true)
     setError(null)
 
-    // visitors can't read pending rows back (RLS), so the id is generated here
-    const reviewId = crypto.randomUUID()
-    const { error: insError } = await supabase.from('reviews').insert({
-      id: reviewId,
-      product_id: productId,
-      customer_name: name.trim(),
-      rating,
-      body: body.trim(),
-    })
-    if (insError) {
-      setSubmitting(false)
-      setError('تعذّر إرسال التقييم — حاول مجدداً')
-      return
-    }
-
-    // photos are best-effort: the review itself is already submitted
-    let failedPhotos = false
+    // photos are compressed here so the function receives small webp files
+    const formData = new FormData()
+    formData.append('token', token)
+    formData.append('product_id', productId)
+    formData.append('customer_name', name.trim())
+    formData.append('rating', String(rating))
+    formData.append('body', body.trim())
     for (let i = 0; i < photos.length; i++) {
       try {
         const blob = await compressImage(photos[i])
-        const path = `${reviewId}/${i}.webp`
-        const { error: upError } = await supabase.storage
-          .from('review-images')
-          .upload(path, blob, { contentType: 'image/webp' })
-        if (upError) throw upError
-        const { error: imgError } = await supabase
-          .from('review_images')
-          .insert({ review_id: reviewId, storage_path: path, position: i })
-        if (imgError) throw imgError
+        formData.append(`photo${i}`, blob, `${i}.webp`)
       } catch {
-        failedPhotos = true
+        // unsupported file — the review still goes through without it
       }
     }
-    setPhotoWarning(failedPhotos)
-    setSubmitting(false)
-    setDone(true)
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/submit-review`,
+        {
+          method: 'POST',
+          headers: {
+            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: formData,
+        }
+      )
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.ok) throw new Error(data.error || 'request failed')
+      setPhotoWarning(!!data.photoFailed)
+      setDone(true)
+    } catch {
+      setError('تعذّر إرسال التقييم — حاول مجدداً')
+      // a used token can't be verified twice — get a fresh one for the retry
+      if (widgetIdRef.current !== null && window.turnstile) {
+        setToken('')
+        window.turnstile.reset(widgetIdRef.current)
+      }
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (done) {
@@ -166,6 +222,15 @@ function ReviewForm({ productId }) {
         )}
       </div>
 
+      {/* invisible for most visitors — shows a checkbox only on suspicion */}
+      {TURNSTILE_SITE_KEY ? (
+        <div ref={widgetRef} />
+      ) : (
+        <p className="text-sm text-amber-700">
+          نموذج التقييم غير مُفعّل (مفتاح التحقق الأمني غير مضبوط)
+        </p>
+      )}
+
       {error && (
         <p role="alert" className="rounded-xl bg-rose/10 px-4 py-2.5 text-sm text-rose-dark">
           {error}
@@ -174,7 +239,7 @@ function ReviewForm({ productId }) {
 
       <button
         type="submit"
-        disabled={submitting}
+        disabled={submitting || !TURNSTILE_SITE_KEY}
         className="self-start rounded-full bg-rose px-8 py-2.5 text-white font-bold hover:bg-rose-dark transition-colors disabled:opacity-60"
       >
         {submitting ? 'جاري الإرسال...' : 'إرسال التقييم'}
