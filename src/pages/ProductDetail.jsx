@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { categoryNames, categoryEmoji } from '../data/categories.js'
@@ -26,6 +26,11 @@ function ProductDetail() {
   const { products, loading, error, refetch } = useProducts()
   const { reviews } = useProductReviews(id)
   const [choices, setChoices] = useState({})
+
+  const productName = products.find((p) => p.id === id)?.nameAr
+  useEffect(() => {
+    if (productName) document.title = `${productName} — لولو كوزمتكس`
+  }, [productName])
 
   if (loading || error) return <DataStatus error={error} onRetry={refetch} />
 
