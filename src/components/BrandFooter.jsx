@@ -27,6 +27,7 @@ function BrandFooter() {
         <img
           src="/images/all-products-strip.webp"
           alt=""
+          loading="lazy"
           onError={() => setFailed(true)}
           className="absolute inset-0 w-full h-full object-cover object-[85%_25%]"
         />
