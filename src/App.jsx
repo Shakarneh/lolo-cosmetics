@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { MotionConfig } from 'framer-motion'
 import Layout from './components/Layout.jsx'
@@ -13,22 +14,32 @@ import Search from './pages/Search.jsx'
 import Cart from './pages/Cart.jsx'
 import { CartProvider } from './context/CartContext.jsx'
 import { AuthProvider } from './admin/AuthContext.jsx'
-import AdminLogin from './admin/Login.jsx'
-import AdminLayout from './admin/AdminLayout.jsx'
-import AdminDashboard from './admin/Dashboard.jsx'
-import AdminProducts from './admin/ProductsList.jsx'
-import AdminProductForm from './admin/ProductForm.jsx'
-import AdminPackages from './admin/PackagesList.jsx'
-import AdminPackageForm from './admin/PackageForm.jsx'
-import AdminReviews from './admin/ReviewsQueue.jsx'
-import AdminUsers from './admin/UsersManager.jsx'
-import AdminAnalytics from './admin/Analytics.jsx'
+
+// لوحة التحكم تُحمَّل فقط عند فتح /admin — الزبائن لا يحمّلون كودها إطلاقاً
+// (Lighthouse: كانت ~122KB جافاسكربت غير مستخدمة على الصفحة الرئيسية)
+const AdminLogin = lazy(() => import('./admin/Login.jsx'))
+const AdminLayout = lazy(() => import('./admin/AdminLayout.jsx'))
+const AdminDashboard = lazy(() => import('./admin/Dashboard.jsx'))
+const AdminProducts = lazy(() => import('./admin/ProductsList.jsx'))
+const AdminProductForm = lazy(() => import('./admin/ProductForm.jsx'))
+const AdminPackages = lazy(() => import('./admin/PackagesList.jsx'))
+const AdminPackageForm = lazy(() => import('./admin/PackageForm.jsx'))
+const AdminReviews = lazy(() => import('./admin/ReviewsQueue.jsx'))
+const AdminUsers = lazy(() => import('./admin/UsersManager.jsx'))
+const AdminAnalytics = lazy(() => import('./admin/Analytics.jsx'))
+
+const adminFallback = (
+  <div className="min-h-screen flex items-center justify-center bg-cream text-taupe">
+    جاري التحميل...
+  </div>
+)
 
 function App() {
   return (
     <MotionConfig reducedMotion="user">
       <AuthProvider>
         <CartProvider>
+        <Suspense fallback={adminFallback}>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
@@ -57,6 +68,7 @@ function App() {
             <Route path="analytics" element={<AdminAnalytics />} />
           </Route>
         </Routes>
+        </Suspense>
         </CartProvider>
       </AuthProvider>
     </MotionConfig>
