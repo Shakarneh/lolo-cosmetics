@@ -1,0 +1,35 @@
+# Lolo Cosmetics — لولو كوزمتكس
+
+> متجر فلسطيني لمستحضرات التجميل والعناية الشخصية. لولو كوزمتكس (Lolo Cosmetics) يعرض المكياج، العناية بالبشرة والجسم والشعر، العطور والمستلزمات — بجودة عالية وأسعار مناسبة، مع توصيل للضفة الغربية والقدس. الطلب يتم عبر واتساب مباشرة، بدون دفع إلكتروني.
+
+A Palestinian showcase store for cosmetics and personal care. Customers browse products
+on the website and order via WhatsApp chat (no online checkout). Prices are in Israeli
+Shekel (₪). Interface language: Arabic (RTL).
+
+## الأقسام / Sections
+
+- [كل المنتجات (All Products)](https://lolocosmetics.shop/products): the full catalog
+- [المكياج (Makeup)](https://lolocosmetics.shop/products/makeup)
+- [العناية بالبشرة (Skincare)](https://lolocosmetics.shop/products/skincare)
+- [العناية بالجسم (Body Care)](https://lolocosmetics.shop/products/body)
+- [العناية بالشعر (Hair Care)](https://lolocosmetics.shop/products/hair)
+- [العطور (Perfumes)](https://lolocosmetics.shop/products/perfume)
+- [مستلزمات أخرى (Misc)](https://lolocosmetics.shop/products/other)
+- [عروض وخصومات (Offers)](https://lolocosmetics.shop/offers): discounted products
+- [البكجات (Packages)](https://lolocosmetics.shop/packages): curated product bundles
+- [تواصل معنا (Contact)](https://lolocosmetics.shop/contact)
+
+## الطلب والتواصل / Ordering & Contact
+
+- الطلب عبر واتساب / WhatsApp orders: +970 59-395-0074 (https://wa.me/970593950074)
+- انستغرام / Instagram: https://instagram.com/lolo_cosmetice
+- التوصيل / Delivery: West Bank & Jerusalem (الضفة الغربية والقدس)
+- كل صفحة منتج فيها زر طلب مباشر عبر واتساب مع اسم المنتج وكوده.
+  Every product page has a direct WhatsApp order button prefilled with the product name and code.
+
+## ملاحظات / Notes
+
+- بعض المنتجات سعرها «تواصل معنا للسعر» — يُسأل عنها عبر واتساب.
+  Some products show "contact us for price" — ask via WhatsApp.
+- تقييمات العملاء تُنشر بعد موافقة المتجر.
+  Customer reviews are published after store approval.
